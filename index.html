@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -157,10 +156,9 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 .input-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-600); pointer-events: none; }
 .input-icon svg { width: 16px; height: 16px; }
 
-/* ─── SMART TIME INPUT (the magic) ─── */
+/* ─── SMART TIME INPUT ─── */
 .time-field-wrap { position: relative; }
 
-/* Resting state: looks like a value display, not a live input box */
 .smart-time-display {
   display: flex;
   align-items: center;
@@ -199,7 +197,6 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 }
 .smart-time-display:hover .time-edit-hint { color: var(--gray-500); }
 
-/* Active state: real text input */
 .smart-time-input {
   width: 100%;
   padding: 9px 12px;
@@ -217,7 +214,6 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 .smart-time-input.active { display: block; }
 .smart-time-display.hidden { display: none; }
 
-/* Parsing hint shown below field during editing */
 .time-parse-hint {
   font-size: 0.7rem;
   margin-top: 3px;
@@ -270,16 +266,6 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 .date-parse-hint.err { color: var(--red-400); }
 .date-parse-hint.dim { color: var(--gray-600); }
 
-/* Date picker native input overlay */
-.date-picker-native {
-  position: absolute;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  top: 0; left: 0;
-  cursor: pointer;
-  pointer-events: none;
-}
 .date-picker-btn {
   display: flex; align-items: center; gap: 4px;
   padding: 4px 8px; border: none; border-radius: var(--radius-md);
@@ -287,6 +273,7 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
   font-size: 0.72rem; font-weight: 600; cursor: pointer;
   transition: background var(--transition);
   white-space: nowrap;
+  position: relative;
 }
 .date-picker-btn:hover { background: rgba(96,165,250,.22); }
 .date-picker-btn svg { width: 12px; height: 12px; }
@@ -387,10 +374,10 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 const state = {
   activeSection: 'date',
   completedSections: [],
-  seededDate: true, // simulates being launched from calendar
+  seededDate: true,
   formData: {
     shift: {
-      date: '2024-11-01', // seeded from calendar
+      date: '2024-11-01',
       times: { start: null, end: null, breaks: [] },
       tips: { amount: null, pools: [] },
       wage: { startTime: null, endTime: null, hourlyRate: 6 },
@@ -405,24 +392,10 @@ const state = {
 // ─────────────────────────────────────────────
 //  TIME PARSING ENGINE
 // ─────────────────────────────────────────────
-/**
- * Parse shorthand time input → { h, m, meridiem } or null
- * Rules:
- *   "9"      → 9:00  (hour 9–11 → am, else pm by default)
- *   "5"      → 5:00 pm
- *   "530"    → 5:30 pm
- *   "1730"   → 17:30 (military → known pm)
- *   "9a","9p"→ forced meridiem
- *   "120"    → 1:20 (not 12:00)
- *   "10"     → 10:00
- *   "12"     → 12:00
- *   "1020"   → 10:20
- */
 function parseTimeInput(raw) {
   if (!raw || !raw.trim()) return null;
   let s = raw.trim().toLowerCase().replace(/[:\s]/g, '');
 
-  // Extract forced meridiem suffix
   let forcedMeridiem = null;
   if (s.endsWith('am') || s.endsWith('a')) {
     forcedMeridiem = 'am';
@@ -438,41 +411,30 @@ function parseTimeInput(raw) {
   let h, m;
 
   if (s.length <= 2) {
-    // "5" → 5:00, "10" → 10:00, "17" → military
-    h = n;
-    m = 0;
+    h = n; m = 0;
   } else if (s.length === 3) {
-    // "530" → 5:30, "130" → 1:30, "120" → 1:20
-    h = parseInt(s[0], 10);
-    m = parseInt(s.slice(1), 10);
+    h = parseInt(s[0], 10); m = parseInt(s.slice(1), 10);
   } else {
-    // 4 digits: "1730" → 17:30, "1020" → 10:20, "0930" → 9:30
-    h = parseInt(s.slice(0, 2), 10);
-    m = parseInt(s.slice(2), 10);
+    h = parseInt(s.slice(0, 2), 10); m = parseInt(s.slice(2), 10);
   }
 
   if (m < 0 || m > 59) return null;
   if (h < 0 || h > 23) return null;
 
-  // Military time (h >= 13) → pm known, no need to guess
   const isMilitary = h >= 13;
-  const isMidnight = h === 0;
-
   let resolvedH = h;
   let meridiem;
 
   if (isMilitary) {
-    // Already 24h
     resolvedH = h;
-    meridiem = 'pm'; // just for display clarity (h stays as-is)
+    meridiem = 'pm';
   } else if (forcedMeridiem) {
     meridiem = forcedMeridiem;
     if (meridiem === 'pm' && h !== 12) resolvedH = h + 12;
     if (meridiem === 'am' && h === 12) resolvedH = 0;
   } else {
-    // Auto-guess: 9, 10, 11 → am; everything else → pm
     if (h >= 9 && h <= 11) meridiem = 'am';
-    else if (h === 12) meridiem = 'pm'; // noon
+    else if (h === 12) meridiem = 'pm';
     else meridiem = 'pm';
     if (meridiem === 'pm' && h < 12) resolvedH = h + 12;
   }
@@ -482,57 +444,37 @@ function parseTimeInput(raw) {
   return { h: resolvedH, m, meridiem: isMilitary ? (h >= 12 ? 'pm' : 'am') : meridiem };
 }
 
-/**
- * Given start time (24h int) and a raw end input,
- * auto-determine am/pm for end so it's chronologically next.
- */
 function parseEndTimeWithContext(raw, startH24) {
   if (!raw || !raw.trim()) return null;
   let s = raw.trim().toLowerCase().replace(/[:\s]/g, '');
 
-  // If explicit meridiem provided, just use normal parse
   if (/[ap]m?$/.test(s)) return parseTimeInput(raw);
 
-  // Parse without context first
   const parsed = parseTimeInput(raw);
   if (!parsed) return null;
 
-  // If military, no ambiguity
   const sMod = s.replace(/am$|a$|pm$|p$/, '');
   if (sMod.length === 4 && parseInt(sMod.slice(0,2)) >= 13) return parsed;
   if (sMod.length === 2 && parseInt(sMod) >= 13) return parsed;
 
-  // Ambiguous 12h input: try to figure out if it's after start
-  const rawH = parsed.h > 12 ? parsed.h - 12 : parsed.h; // canonical 1-12
+  const rawH = parsed.h > 12 ? parsed.h - 12 : parsed.h;
   const m = parsed.m;
 
-  // Try both am and pm interpretations
-  const asAM = rawH === 12 ? 0 : rawH;       // 12am → 0
-  const asPM = rawH === 12 ? 12 : rawH + 12; // 12pm → 12
+  const asAM = rawH === 12 ? 0 : rawH;
+  const asPM = rawH === 12 ? 12 : rawH + 12;
 
-  if (startH24 === null || startH24 === undefined) {
-    // No context, use default guessing
-    return parsed;
-  }
+  if (startH24 === null || startH24 === undefined) return parsed;
 
-  // Compute minutes-from-start for each option
   const startMins = startH24 * 60;
   const amMins = asAM * 60 + m;
   const pmMins = asPM * 60 + m;
 
-  // Handle crossing midnight: add 24h if end < start
   const amDiff = amMins >= startMins ? amMins - startMins : amMins + 1440 - startMins;
   const pmDiff = pmMins >= startMins ? pmMins - startMins : pmMins + 1440 - startMins;
 
-  // Pick the interpretation that results in the shorter forward span (but > 0)
-  // Rationale: 2am after 5pm = 9h span; 2pm after 5pm = 21h span → prefer 2am
-  // But if start is 10am and end input is 2 → 2pm (4h) vs 2am (16h) → prefer 2pm
   let chosenH;
-  if (amDiff <= pmDiff) {
-    chosenH = asAM;
-  } else {
-    chosenH = asPM;
-  }
+  if (amDiff <= pmDiff) chosenH = asAM;
+  else chosenH = asPM;
 
   return { h: chosenH, m, meridiem: chosenH >= 12 ? 'pm' : 'am' };
 }
@@ -551,7 +493,6 @@ function formatTimeDisplay(time24) {
 }
 
 function previewTimeInput(raw, contextStartH24) {
-  // Returns { display, valid } for the hint line
   if (!raw || !raw.trim()) return { display: '', valid: null };
   const parsed = contextStartH24 !== undefined
     ? parseEndTimeWithContext(raw, contextStartH24)
@@ -570,17 +511,14 @@ function parseDateInput(raw) {
   if (!raw || !raw.trim()) return null;
   const s = raw.trim().toLowerCase();
 
-  // "today", "yesterday", "tomorrow"
   const today = new Date();
   if (s === 'today' || s === 't') return today;
   if (s === 'yesterday' || s === 'y') { const d = new Date(today); d.setDate(d.getDate()-1); return d; }
   if (s === 'tomorrow') { const d = new Date(today); d.setDate(d.getDate()+1); return d; }
 
-  // Try native parse first (handles ISO, "Nov 1", etc.)
   const native = new Date(raw);
   if (!isNaN(native.getTime()) && raw.trim().length > 4) return native;
 
-  // Numeric shortcuts: "1101" → Nov 1, "110124" → Nov 1 2024, "11/1", "11-1"
   const numericFull = s.replace(/[-\/\.]/g, '');
   if (/^\d{3,8}$/.test(numericFull)) {
     const n = numericFull;
@@ -595,21 +533,14 @@ function parseDateInput(raw) {
     }
   }
 
-  // "Nov 1", "1 Nov", "November 1st"
   for (let i = 0; i < 12; i++) {
     const mo = MONTHS[i];
     const ms = MONTH_SHORT[i];
     const pat1 = new RegExp(`(${mo}|${ms})\\s+(\\d{1,2})(st|nd|rd|th)?`);
     const pat2 = new RegExp(`(\\d{1,2})(st|nd|rd|th)?\\s+(${mo}|${ms})`);
     let m;
-    if ((m = s.match(pat1))) {
-      const d = new Date(today.getFullYear(), i, parseInt(m[2]));
-      if (!isNaN(d.getTime())) return d;
-    }
-    if ((m = s.match(pat2))) {
-      const d = new Date(today.getFullYear(), i, parseInt(m[1]));
-      if (!isNaN(d.getTime())) return d;
-    }
+    if ((m = s.match(pat1))) { const d = new Date(today.getFullYear(), i, parseInt(m[2])); if (!isNaN(d.getTime())) return d; }
+    if ((m = s.match(pat2))) { const d = new Date(today.getFullYear(), i, parseInt(m[1])); if (!isNaN(d.getTime())) return d; }
   }
 
   return null;
@@ -669,7 +600,6 @@ function calcTotal() {
 }
 
 function calcProgress() {
-  // Only date is truly required; times/wage/tips can be partial
   let score = 0;
   if (state.formData.shift.date) score++;
   return Math.round((score / 1) * 100);
@@ -724,7 +654,7 @@ const sections = [
 const sectionOrder = sections.map(s=>s.id);
 
 // ─────────────────────────────────────────────
-//  SMART TIME FIELD COMPONENT (rendered as HTML)
+//  SMART TIME FIELD COMPONENT
 // ─────────────────────────────────────────────
 function renderSmartTimeField({ id, label, value, required, isEnd, startValue }) {
   const displayVal = value ? formatTimeDisplay(value) : null;
@@ -733,7 +663,7 @@ function renderSmartTimeField({ id, label, value, required, isEnd, startValue })
     <div class="form-group">
       <label class="form-label">${label} ${req}</label>
       <div class="time-field-wrap">
-        <div class="smart-time-display ${displayVal ? '' : ''}" id="disp-${id}" onclick="activateTimeField('${id}')">
+        <div class="smart-time-display" id="disp-${id}" onclick="activateTimeField('${id}')">
           ${displayVal
             ? `<span class="time-val">${displayVal}</span>`
             : `<span class="time-empty">—</span>`
@@ -770,7 +700,7 @@ function renderSmartDateField() {
         Shift Date <span class="required">*</span>
       </label>
       <div class="date-field-wrap">
-        <div class="smart-date-display ${seeded ? 'seeded' : ''} ${iso ? '' : ''}" id="disp-date" onclick="activateDateField()">
+        <div class="smart-date-display ${seeded ? 'seeded' : ''}" id="disp-date" onclick="activateDateField()">
           <div style="flex:1;">
             ${fmt
               ? `<div class="date-val">${fmt.full}</div><div class="date-day">${fmt.day}</div>`
@@ -810,7 +740,6 @@ function render() {
   const total = calcTotal();
   const pct = calcProgress();
 
-  // Nav sub-labels
   function navSub(id) {
     if (id === 'date') {
       const fmt = fd.shift.date ? formatDateDisplay(fd.shift.date) : null;
@@ -847,7 +776,6 @@ function render() {
     return state.completedSections.includes(id);
   }
 
-  // Wage calc for summary
   const wStart = fd.shift.wage.startTime || startT;
   const wEnd = fd.shift.wage.endTime || endT;
   const wageDur = calcDuration(wStart, wEnd);
@@ -869,7 +797,6 @@ function render() {
     </div>
 
     <div class="layout">
-      <!-- LEFT SIDEBAR -->
       <aside class="sidebar-l">
         <div class="sticky">
           <div class="card card-pad">
@@ -921,12 +848,10 @@ function render() {
         </div>
       </aside>
 
-      <!-- MAIN FORM -->
       <main class="main">
         ${renderSection(dur, wageEarnings, wageDur)}
       </main>
 
-      <!-- RIGHT SIDEBAR -->
       <aside class="sidebar-r">
         <div class="sticky">
           <div class="card card-pad">
@@ -1027,7 +952,6 @@ function renderSection(dur, wageEarnings, wageDur) {
   const fd = state.formData;
   const sec = state.activeSection;
 
-  // ── DATE ──
   if (sec === 'date') {
     return `
     <div class="animate-in">
@@ -1061,7 +985,6 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── TIMES ──
   if (sec === 'times') {
     const startH24 = fd.shift.times.start ? parseInt(fd.shift.times.start.split(':')[0]) : null;
     return `
@@ -1072,7 +995,7 @@ function renderSection(dur, wageEarnings, wageDur) {
             <h2 class="section-title">Shift Times</h2>
             <span class="badge badge-purple">Optional</span>
           </div>
-          <div class="section-sub">When did your shift start and end? You can fill this in later.</div>
+          <div class="section-sub">When did your shift start and end?</div>
         </div>
       </div>
       <div class="card form-card">
@@ -1080,7 +1003,6 @@ function renderSection(dur, wageEarnings, wageDur) {
           ${renderSmartTimeField({ id: 'start', label: 'Start Time', value: fd.shift.times.start, required: false, isEnd: false })}
           ${renderSmartTimeField({ id: 'end', label: 'End Time', value: fd.shift.times.end, required: false, isEnd: true, startValue: startH24 })}
         </div>
-
         ${(fd.shift.times.start || fd.shift.times.end) ? `
           <div class="duration-bar">
             <div class="duration-left">
@@ -1089,14 +1011,13 @@ function renderSection(dur, wageEarnings, wageDur) {
                 <div class="duration-label">Shift Duration</div>
                 <div class="duration-note">${
                   fd.shift.times.start && fd.shift.times.end
-                    ? (calcDuration(fd.shift.times.start, fd.shift.times.end) < 0 || parseInt(fd.shift.times.end.split(':')[0]) < parseInt(fd.shift.times.start.split(':')[0]) ? 'Overnight shift' : 'Same-day shift')
+                    ? (parseInt(fd.shift.times.end.split(':')[0]) < parseInt(fd.shift.times.start.split(':')[0]) ? 'Overnight shift' : 'Same-day shift')
                     : 'Partial — fill in both times to see duration'
                 }</div>
               </div>
             </div>
             <div class="duration-val">${dur} hrs</div>
           </div>` : ''}
-
         <div>
           <div class="breaks-header" style="margin-bottom:10px;">
             <label class="form-label">Break Time <span class="optional">(Optional)</span></label>
@@ -1105,14 +1026,8 @@ function renderSection(dur, wageEarnings, wageDur) {
           ${fd.shift.times.breaks.map((b,i) => `
             <div class="card break-card" style="margin-bottom:8px;">
               <div class="break-grid">
-                <div class="form-group">
-                  <label class="form-label-sm">Break Start</label>
-                  ${renderSmartTimeField({ id: 'brk-start-'+i, label: '', value: b.start, required: false, isEnd: false })}
-                </div>
-                <div class="form-group">
-                  <label class="form-label-sm">Break End</label>
-                  ${renderSmartTimeField({ id: 'brk-end-'+i, label: '', value: b.end, required: false, isEnd: true })}
-                </div>
+                <div>${renderSmartTimeField({ id: 'brk-start-'+i, label: 'Break Start', value: b.start, required: false, isEnd: false })}</div>
+                <div>${renderSmartTimeField({ id: 'brk-end-'+i, label: 'Break End', value: b.end, required: false, isEnd: true })}</div>
                 <div style="display:flex;align-items:flex-end;padding-bottom:20px;">
                   <button class="btn-danger" onclick="removeBreak(${i})">Remove</button>
                 </div>
@@ -1120,7 +1035,6 @@ function renderSection(dur, wageEarnings, wageDur) {
             </div>
           `).join('')}
         </div>
-
         <div>
           <div class="suggest-hdr">${svg('bulb',15)}<span>Smart Suggestions</span></div>
           <div class="card suggest-card">
@@ -1148,7 +1062,6 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── TIPS ──
   if (sec === 'tips') {
     const hasTips = fd.shift.tips.amount !== null;
     return `
@@ -1159,7 +1072,7 @@ function renderSection(dur, wageEarnings, wageDur) {
             <h2 class="section-title">Tips &amp; Earnings</h2>
             <span class="badge badge-amber">Optional</span>
           </div>
-          <div class="section-sub">Record your tip earnings. Leave blank if not yet known.</div>
+          <div class="section-sub">Record your tip earnings.</div>
         </div>
       </div>
       <div class="card form-card">
@@ -1167,10 +1080,9 @@ function renderSection(dur, wageEarnings, wageDur) {
           <label class="form-label">Total Tips <span class="optional">(leave blank if not yet logged)</span></label>
           <div class="input-wrap form-input-prefix">
             <span class="prefix-sym">$</span>
-            <input type="number" class="form-input form-input-lg" value="${hasTips ? fd.shift.tips.amount : ''}" oninput="updateTips(this.value)" name="shift[tips][amount]" placeholder="—">
+            <input type="number" class="form-input form-input-lg" value="${hasTips ? fd.shift.tips.amount : ''}" oninput="updateTips(this.value)" placeholder="—">
           </div>
         </div>
-
         <div>
           <div class="pools-header" style="margin-bottom:10px;">
             <label class="form-label">Tip Pool Breakdown <span class="optional">(Optional)</span></label>
@@ -1196,8 +1108,8 @@ function renderSection(dur, wageEarnings, wageDur) {
             </div>`;
           }).join('')}
           ${fd.shift.tips.pools.length > 0 && hasTips ? `
-            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-500);padding:4px 2px;">
-              <span>Pool total: <strong style="color:${poolTotal()===fd.shift.tips.amount?'var(--emerald-400)':'var(--amber-400)'}">${poolTotal() === fd.shift.tips.amount ? '✓ Balanced' : `$${poolTotal()} of $${fd.shift.tips.amount}`}</strong></span>
+            <div style="font-size:0.75rem;color:var(--gray-500);padding:4px 2px;">
+              Pool total: <strong style="color:${poolTotal()===fd.shift.tips.amount?'var(--emerald-400)':'var(--amber-400)'}">${poolTotal() === fd.shift.tips.amount ? '✓ Balanced' : '$'+poolTotal()+' of $'+fd.shift.tips.amount}</strong>
             </div>` : ''}
         </div>
       </div>
@@ -1208,12 +1120,10 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── WAGE ──
   if (sec === 'wage') {
     const w = fd.shift.wage;
     const mainStart = fd.shift.times.start;
     const mainEnd = fd.shift.times.end;
-    // Effective wage times: override or fall back to main times
     const effectiveStart = w.startTime || mainStart;
     const effectiveEnd = w.endTime || mainEnd;
     const wDur = calcDuration(effectiveStart, effectiveEnd);
@@ -1229,12 +1139,10 @@ function renderSection(dur, wageEarnings, wageDur) {
             <h2 class="section-title">Wage</h2>
             <span class="badge badge-emerald">Optional</span>
           </div>
-          <div class="section-sub">Your hourly pay. Seeded from shift times — override if your clock-in differs.</div>
+          <div class="section-sub">Your hourly pay. Seeded from shift times — override if needed.</div>
         </div>
       </div>
       <div class="card form-card">
-
-        <!-- Hours Sub-section -->
         <div>
           <div class="wage-sub-label">Hours Worked</div>
           <div class="wage-seeded-hint">
@@ -1264,11 +1172,9 @@ function renderSection(dur, wageEarnings, wageDur) {
                   <div class="duration-note">Set both times to calculate</div>
                 </div>
               </div>
-              <div class="duration-val" style="background:var(--gray-600);-webkit-background-clip:text;color:var(--gray-600);">—</div>
+              <div class="duration-val" style="-webkit-text-fill-color:var(--gray-600)">—</div>
             </div>`}
         </div>
-
-        <!-- Hourly Rate Sub-section -->
         <div>
           <div class="wage-sub-label">Hourly Rate</div>
           <div class="form-group" style="max-width:200px;">
@@ -1280,8 +1186,6 @@ function renderSection(dur, wageEarnings, wageDur) {
             <span style="font-size:0.7rem;color:var(--gray-600)">Seeded to $6.00</span>
           </div>
         </div>
-
-        <!-- Total calculation -->
         ${wEarnings ? `
           <div class="duration-bar" style="border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.07)">
             <div class="duration-left">
@@ -1303,7 +1207,6 @@ function renderSection(dur, wageEarnings, wageDur) {
             </div>
             <div class="duration-val" style="-webkit-text-fill-color:var(--gray-600)">—</div>
           </div>`}
-
       </div>
       <div class="form-nav" style="margin-top:8px;">
         <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
@@ -1312,7 +1215,6 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── TEAM ──
   if (sec === 'team') {
     const team = fd.shift.team;
     const presetRoles = ['Server','Bartender','Host','Busser','Runner','Barback','Manager'];
@@ -1373,7 +1275,6 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── EVENTS ──
   if (sec === 'events') {
     const ev = fd.shift.events;
     return `
@@ -1407,7 +1308,7 @@ function renderSection(dur, wageEarnings, wageDur) {
           ${ev.items.map((item,i)=>`
             <div class="card break-card" style="margin-bottom:8px;">
               <div style="display:grid;grid-template-columns:130px 1fr auto;gap:10px;align-items:end;">
-                <div class="form-group">
+                <div>
                   <label class="form-label-sm">Time</label>
                   ${renderSmartTimeField({ id: 'evt-'+i, label: '', value: item.time, required: false, isEnd: false })}
                 </div>
@@ -1430,7 +1331,6 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── CHUMP ──
   if (sec === 'chump') {
     const ch = fd.shift.chump;
     return `
@@ -1493,7 +1393,6 @@ function renderSection(dur, wageEarnings, wageDur) {
     </div>`;
   }
 
-  // ── NOTES ──
   if (sec === 'notes') {
     const no = fd.shift.notes;
     const moods = [['😤','Rough'],['😐','Meh'],['🙂','Decent'],['😊','Good'],['🤩','Amazing']];
@@ -1527,7 +1426,7 @@ function renderSection(dur, wageEarnings, wageDur) {
         </div>
         <div class="form-group">
           <label class="form-label">Free Notes <span class="optional">(Optional)</span></label>
-          <textarea class="form-input" rows="4" placeholder="Anything worth remembering — regulars, complaints, good moments…" oninput="updateNotes('text',this.value)" style="resize:vertical;">${no.text||''}</textarea>
+          <textarea class="form-input" rows="4" placeholder="Anything worth remembering…" oninput="updateNotes('text',this.value)" style="resize:vertical;">${no.text||''}</textarea>
           <div style="font-size:0.7rem;color:var(--gray-600);text-align:right;margin-top:2px;">${(no.text||'').length} chars</div>
         </div>
       </div>
@@ -1564,9 +1463,8 @@ function livePreviewTime(id, isEnd) {
     hint.textContent = 'Type shorthand: 5 → 5:00 PM, 9 → 9:00 AM, 1730 → 5:30 PM';
     return;
   }
-
   let preview;
-  if (isEnd) {
+  if (isEnd === true || isEnd === 'true') {
     const startH24 = state.formData.shift.times.start
       ? parseInt(state.formData.shift.times.start.split(':')[0])
       : null;
@@ -1574,7 +1472,6 @@ function livePreviewTime(id, isEnd) {
   } else {
     preview = previewTimeInput(raw, undefined);
   }
-
   if (preview.valid === true) {
     hint.className = 'time-parse-hint ok';
     hint.textContent = preview.display;
@@ -1591,10 +1488,8 @@ function commitTimeField(id, fieldType) {
   const inp = document.getElementById('input-' + id);
   if (!inp) return;
   const raw = inp.value.trim();
-
   let value24 = null;
   if (raw) {
-    // Determine which field this is for context-aware parsing
     if (fieldType === 'end') {
       const startH24 = state.formData.shift.times.start
         ? parseInt(state.formData.shift.times.start.split(':')[0])
@@ -1606,49 +1501,19 @@ function commitTimeField(id, fieldType) {
       value24 = formatTime24(parsed);
     }
   }
-
-  // Route to correct state field
-  if (id === 'start') {
-    state.formData.shift.times.start = value24;
-  } else if (id === 'end') {
-    state.formData.shift.times.end = value24;
-  } else if (id === 'wage-start') {
-    // Independent wage override
-    const mainStart = state.formData.shift.times.start;
-    state.formData.shift.wage.startTime = (value24 === mainStart) ? null : value24;
-    if (!value24) state.formData.shift.wage.startTime = null;
-    else state.formData.shift.wage.startTime = value24;
-  } else if (id === 'wage-end') {
-    state.formData.shift.wage.endTime = value24;
-  } else if (id.startsWith('brk-start-')) {
-    const i = parseInt(id.replace('brk-start-', ''));
-    state.formData.shift.times.breaks[i].start = value24;
-  } else if (id.startsWith('brk-end-')) {
-    const i = parseInt(id.replace('brk-end-', ''));
-    state.formData.shift.times.breaks[i].end = value24;
-  } else if (id.startsWith('evt-')) {
-    const i = parseInt(id.replace('evt-', ''));
-    state.formData.shift.events.items[i].time = value24;
-  }
-
+  if (id === 'start') state.formData.shift.times.start = value24;
+  else if (id === 'end') state.formData.shift.times.end = value24;
+  else if (id === 'wage-start') state.formData.shift.wage.startTime = value24;
+  else if (id === 'wage-end') state.formData.shift.wage.endTime = value24;
+  else if (id.startsWith('brk-start-')) { const i = parseInt(id.replace('brk-start-', '')); state.formData.shift.times.breaks[i].start = value24; }
+  else if (id.startsWith('brk-end-')) { const i = parseInt(id.replace('brk-end-', '')); state.formData.shift.times.breaks[i].end = value24; }
+  else if (id.startsWith('evt-')) { const i = parseInt(id.replace('evt-', '')); state.formData.shift.events.items[i].time = value24; }
   render();
-  // After render, if value was invalid/empty, show original raw in hint
-  const newHint = document.getElementById('hint-' + id);
-  if (newHint && raw && !value24) {
-    newHint.className = 'time-parse-hint err';
-    newHint.textContent = `"${raw}" wasn't recognized`;
-  }
 }
 
 function timeFieldKeydown(e, id, fieldType) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    commitTimeField(id, fieldType);
-  }
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    render(); // cancel — restore display
-  }
+  if (e.key === 'Enter') { e.preventDefault(); commitTimeField(id, fieldType); }
+  if (e.key === 'Escape') { e.preventDefault(); render(); }
 }
 
 // ─────────────────────────────────────────────
@@ -1719,31 +1584,18 @@ function nativeDatePicked(val) {
 //  EVENT HANDLERS
 // ─────────────────────────────────────────────
 function setSection(id) { state.activeSection = id; render(); }
-function nextSection() {
-  const i = sectionOrder.indexOf(state.activeSection);
-  if (i < sectionOrder.length - 1) setSection(sectionOrder[i+1]);
-}
-function prevSection() {
-  const i = sectionOrder.indexOf(state.activeSection);
-  if (i > 0) setSection(sectionOrder[i-1]);
-}
+function nextSection() { const i = sectionOrder.indexOf(state.activeSection); if (i < sectionOrder.length - 1) setSection(sectionOrder[i+1]); }
+function prevSection() { const i = sectionOrder.indexOf(state.activeSection); if (i > 0) setSection(sectionOrder[i-1]); }
 
 function addBreak() { state.formData.shift.times.breaks.push({ start: null, end: null }); render(); }
 function removeBreak(i) { state.formData.shift.times.breaks.splice(i, 1); render(); }
 
-function updateTips(val) {
-  const v = val.trim() === '' ? null : parseFloat(val);
-  state.formData.shift.tips.amount = isNaN(v) ? null : v;
-  render();
-}
+function updateTips(val) { const v = val.trim() === '' ? null : parseFloat(val); state.formData.shift.tips.amount = isNaN(v) ? null : v; render(); }
 function addPool() { state.formData.shift.tips.pools.push({ name:'', amount:0 }); render(); }
 function removePool(i) { state.formData.shift.tips.pools.splice(i, 1); render(); }
 function updatePool(i, field, val) { state.formData.shift.tips.pools[i][field] = val; render(); }
 
-function updateWageRate(val) {
-  state.formData.shift.wage.hourlyRate = val;
-  render();
-}
+function updateWageRate(val) { state.formData.shift.wage.hourlyRate = val; render(); }
 
 function addTeamMember() { state.formData.shift.team.members.push({ name:'', role:'' }); render(); }
 function removeTeamMember(i) { state.formData.shift.team.members.splice(i, 1); render(); }
@@ -1769,9 +1621,7 @@ function toggleTag(tag) {
 }
 
 function applyPattern() {
-  const startParsed = parseTimeInput('17');
-  const endParsed = parseEndTimeWithContext('1', parseInt(formatTime24(startParsed).split(':')[0]));
-  state.formData.shift.times.start = formatTime24(startParsed); // 17:00
+  state.formData.shift.times.start = '17:00';
   state.formData.shift.times.end = '01:00';
   render();
 }
