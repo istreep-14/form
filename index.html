@@ -1,0 +1,1790 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #0a0f1a;
+  --bg-secondary: #131929;
+  --bg-card: rgba(20, 27, 45, 0.85);
+  --bg-card-hover: rgba(26, 35, 56, 0.9);
+  --border: rgba(75, 85, 99, 0.28);
+  --border-focus: rgba(139, 92, 246, 0.5);
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --pink-400: #f472b6;
+  --pink-500: #ec4899;
+  --pink-600: #db2777;
+  --amber-400: #fbbf24;
+  --emerald-400: #34d399;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --red-400: #f87171;
+  --gray-50: #f9fafb;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --radius-md: 0.65rem;
+  --radius-lg: 0.85rem;
+  --radius-xl: 1.1rem;
+  --transition: 180ms cubic-bezier(0.4,0,0.2,1);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, #111827 100%);
+  color: var(--gray-200);
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app { padding: 20px; min-height: 100vh; }
+.header { max-width: 1400px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: space-between; }
+.header-title { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--purple-400), var(--pink-400)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.header-sub { color: var(--gray-500); font-size: 0.8rem; margin-top: 3px; }
+.header-btns { display: flex; gap: 8px; }
+.icon-btn { width: 36px; height: 36px; border-radius: var(--radius-md); border: none; background: transparent; color: var(--gray-400); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background var(--transition); }
+.icon-btn:hover { background: rgba(75,85,99,0.4); }
+.icon-btn svg { width: 18px; height: 18px; }
+.layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr 300px; gap: 16px; }
+
+/* ─── CARDS ─── */
+.card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: var(--radius-xl); transition: border-color var(--transition); }
+.card:hover { border-color: rgba(139,92,246,0.3); }
+.card-pad { padding: 16px; }
+
+/* ─── LEFT SIDEBAR ─── */
+.sidebar-l { display: flex; flex-direction: column; gap: 12px; }
+.sticky { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 40px); overflow-y: auto; }
+.prog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.prog-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-500); }
+.prog-pct { font-size: 0.7rem; font-weight: 700; color: var(--purple-400); }
+.prog-track { height: 7px; background: var(--gray-800); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+.prog-fill { height: 100%; background: linear-gradient(to right, var(--purple-500), var(--pink-500)); border-radius: 999px; transition: width 0.4s ease; }
+.prog-stats { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--gray-600); }
+.nav-group { display: flex; flex-direction: column; gap: 3px; }
+.group-label { padding: 0 8px 4px; }
+.badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.badge-red { background: rgba(239,68,68,.15); color: var(--red-400); }
+.badge-blue { background: rgba(59,130,246,.15); color: var(--blue-400); }
+.badge-amber { background: rgba(245,158,11,.15); color: var(--amber-400); }
+.badge-purple { background: rgba(139,92,246,.18); color: var(--purple-400); }
+.badge-emerald { background: rgba(16,185,129,.15); color: var(--emerald-400); }
+.nav-item { position: relative; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: transparent; border: none; border-radius: var(--radius-lg); cursor: pointer; width: 100%; text-align: left; color: inherit; transition: all var(--transition); }
+.nav-item::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:3px; background: transparent; border-radius: 0 3px 3px 0; transition: background var(--transition); }
+.nav-item:hover:not(.active) { background: rgba(75,85,99,.18); }
+.nav-item.active { background: rgba(139,92,246,.1); }
+.nav-item.active::before { background: linear-gradient(to bottom, var(--purple-500), var(--pink-500)); }
+.nav-icon { width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.nav-icon svg { width: 16px; height: 16px; }
+.bg-purple { background: rgba(139,92,246,.2); color: var(--purple-400); }
+.bg-amber { background: rgba(245,158,11,.2); color: var(--amber-400); }
+.bg-emerald { background: rgba(16,185,129,.2); color: var(--emerald-400); }
+.bg-blue { background: rgba(59,130,246,.2); color: var(--blue-400); }
+.bg-pink { background: rgba(236,72,153,.2); color: var(--pink-400); }
+.bg-yellow { background: rgba(250,204,21,.2); color: #facc15; }
+.nav-text { flex: 1; min-width: 0; }
+.nav-title { font-size: 0.82rem; font-weight: 600; color: var(--gray-50); }
+.nav-sub { font-size: 0.72rem; color: var(--gray-500); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-sub.emerald { color: var(--emerald-400); }
+.check { width: 16px; height: 16px; color: var(--emerald-400); flex-shrink: 0; }
+.check svg { width: 16px; height: 16px; }
+.nav-item-sm { opacity: 0.55; padding: 7px 12px; }
+.nav-item-sm:hover, .nav-item-sm.active { opacity: 1; }
+.nav-icon-sm { width: 28px; height: 28px; }
+.sidebar-actions { padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 7px; }
+
+/* ─── BUTTONS ─── */
+.btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 16px; border: none; border-radius: var(--radius-lg); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all var(--transition); overflow: hidden; }
+.btn svg { width: 15px; height: 15px; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: linear-gradient(135deg, var(--purple-600), var(--pink-600)); color: white; box-shadow: 0 4px 14px rgba(139,92,246,.3); }
+.btn-primary:hover { box-shadow: 0 6px 18px rgba(139,92,246,.4); }
+.btn-secondary { background: rgba(75,85,99,.4); color: var(--gray-300); }
+.btn-secondary:hover { background: rgba(75,85,99,.6); }
+.btn-text { background: transparent; color: var(--gray-500); font-size: 0.8rem; }
+.btn-text:hover { color: var(--gray-300); }
+.btn-link { background: none; border: none; color: var(--purple-400); font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 0; transition: color var(--transition); }
+.btn-link:hover { color: var(--purple-300); }
+.btn-danger { background: transparent; border: none; color: var(--gray-500); font-size: 0.8rem; padding: 5px 10px; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); }
+.btn-danger:hover { color: var(--red-400); background: rgba(239,68,68,.1); }
+.btn-ghost-blue { background: rgba(59,130,246,.18); color: var(--blue-300); font-size: 0.75rem; padding: 6px 12px; }
+.btn-ghost-blue:hover { background: rgba(59,130,246,.3); }
+.full { width: 100%; }
+
+/* ─── MAIN ─── */
+.main { display: flex; flex-direction: column; gap: 14px; }
+.section-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2px; }
+.section-title { font-size: 1.4rem; font-weight: 700; color: var(--gray-50); }
+.section-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.section-sub { font-size: 0.78rem; color: var(--gray-500); }
+.form-card { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label { font-size: 0.78rem; font-weight: 600; color: var(--gray-300); display: flex; align-items: center; gap: 4px; }
+.required { color: var(--purple-400); }
+.optional { color: var(--gray-600); font-weight: 400; font-size: 0.72rem; }
+.form-label-sm { font-size: 0.72rem; font-weight: 600; color: var(--gray-400); }
+.input-wrap { position: relative; }
+
+/* ─── BASE INPUT ─── */
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: rgba(10,15,26,.6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--gray-50);
+  font-size: 0.85rem;
+  transition: border-color var(--transition), box-shadow var(--transition), opacity var(--transition);
+  outline: none;
+  -webkit-appearance: none;
+}
+.form-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(139,92,246,.15); }
+textarea.form-input { font-family: inherit; line-height: 1.5; }
+.form-input-lg { font-size: 1.5rem; font-weight: 700; padding: 10px 12px 10px 30px; }
+.form-input-prefix { position: relative; }
+.prefix-sym { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-500); font-size: 1rem; font-weight: 600; pointer-events: none; }
+.input-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-600); pointer-events: none; }
+.input-icon svg { width: 16px; height: 16px; }
+
+/* ─── SMART TIME INPUT (the magic) ─── */
+.time-field-wrap { position: relative; }
+
+/* Resting state: looks like a value display, not a live input box */
+.smart-time-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(75,85,99,0.18);
+  border-radius: var(--radius-md);
+  cursor: text;
+  min-height: 38px;
+  background: rgba(10,15,26,0.3);
+  transition: border-color var(--transition), background var(--transition);
+  user-select: none;
+}
+.smart-time-display:hover {
+  border-color: rgba(75,85,99,0.45);
+  background: rgba(10,15,26,0.5);
+}
+.smart-time-display .time-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-100);
+  flex: 1;
+}
+.smart-time-display .time-empty {
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  flex: 1;
+  font-style: italic;
+}
+.smart-time-display .time-edit-hint {
+  width: 14px;
+  height: 14px;
+  color: var(--gray-700);
+  flex-shrink: 0;
+  transition: color var(--transition);
+}
+.smart-time-display:hover .time-edit-hint { color: var(--gray-500); }
+
+/* Active state: real text input */
+.smart-time-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: rgba(10,15,26,.8);
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-md);
+  color: var(--gray-50);
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 3px rgba(139,92,246,.15);
+  outline: none;
+  letter-spacing: 0.04em;
+  display: none;
+}
+.smart-time-input.active { display: block; }
+.smart-time-display.hidden { display: none; }
+
+/* Parsing hint shown below field during editing */
+.time-parse-hint {
+  font-size: 0.7rem;
+  margin-top: 3px;
+  min-height: 16px;
+  transition: color 0.15s;
+}
+.time-parse-hint.ok { color: var(--emerald-400); }
+.time-parse-hint.err { color: var(--red-400); }
+.time-parse-hint.dim { color: var(--gray-600); }
+
+/* ─── SMART DATE INPUT ─── */
+.date-field-wrap { position: relative; }
+.smart-date-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 1px solid rgba(75,85,99,0.18);
+  border-radius: var(--radius-md);
+  cursor: text;
+  background: rgba(10,15,26,0.3);
+  transition: border-color var(--transition), background var(--transition);
+  user-select: none;
+}
+.smart-date-display:hover { border-color: rgba(75,85,99,0.45); background: rgba(10,15,26,0.5); }
+.smart-date-display.seeded {
+  border-color: rgba(96,165,250,0.25);
+  background: rgba(96,165,250,0.04);
+}
+.date-val { font-size: 1.05rem; font-weight: 700; color: var(--gray-50); flex: 1; }
+.date-day { font-size: 0.75rem; color: var(--gray-500); margin-top: 1px; }
+.seeded-badge { font-size: 0.65rem; font-weight: 600; color: var(--blue-400); background: rgba(96,165,250,0.12); padding: 2px 6px; border-radius: 6px; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+.smart-date-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(10,15,26,.8);
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-md);
+  color: var(--gray-50);
+  font-size: 1.05rem;
+  font-weight: 700;
+  box-shadow: 0 0 0 3px rgba(139,92,246,.15);
+  outline: none;
+  display: none;
+}
+.smart-date-input.active { display: block; }
+.smart-date-display.hidden { display: none; }
+.date-parse-hint { font-size: 0.7rem; margin-top: 3px; min-height: 16px; transition: color 0.15s; }
+.date-parse-hint.ok { color: var(--emerald-400); }
+.date-parse-hint.err { color: var(--red-400); }
+.date-parse-hint.dim { color: var(--gray-600); }
+
+/* Date picker native input overlay */
+.date-picker-native {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
+  cursor: pointer;
+  pointer-events: none;
+}
+.date-picker-btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 8px; border: none; border-radius: var(--radius-md);
+  background: rgba(96,165,250,.12); color: var(--blue-400);
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+.date-picker-btn:hover { background: rgba(96,165,250,.22); }
+.date-picker-btn svg { width: 12px; height: 12px; }
+
+/* ─── DURATION BAR ─── */
+.duration-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(139,92,246,.07); border: 1px solid rgba(139,92,246,.2); border-radius: var(--radius-lg); }
+.duration-left { display: flex; align-items: center; gap: 8px; }
+.duration-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple-400); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.duration-label { font-size: 0.78rem; color: var(--gray-400); }
+.duration-val { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg,var(--purple-400),var(--pink-400)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.duration-note { font-size: 0.7rem; color: var(--gray-600); margin-top: 1px; }
+
+/* Breaks */
+.breaks-header { display: flex; align-items: center; justify-content: space-between; }
+.break-card { padding: 12px 14px; }
+.break-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; }
+
+/* Tip pools */
+.pools-header { display: flex; align-items: center; justify-content: space-between; }
+.pool-card { padding: 10px 14px; }
+.pool-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; }
+.pool-bar { margin-top: 8px; height: 4px; background: rgba(245,158,11,.15); border-radius: 99px; overflow: hidden; }
+.pool-fill { height: 100%; background: linear-gradient(to right, var(--amber-400), #f97316); border-radius: 99px; }
+
+/* Suggestions */
+.suggest-hdr { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.suggest-hdr svg { width: 16px; height: 16px; color: var(--blue-400); }
+.suggest-hdr span { font-size: 0.72rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; }
+.suggest-card { padding: 14px; }
+.suggest-inner { display: flex; gap: 12px; }
+.suggest-icon { width: 32px; height: 32px; border-radius: var(--radius-md); background: rgba(59,130,246,.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--blue-400); }
+.suggest-icon svg { width: 16px; height: 16px; }
+.suggest-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.suggest-row h4 { font-size: 0.82rem; font-weight: 600; color: var(--gray-100); }
+.suggest-p { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 10px; }
+.suggest-btns { display: flex; gap: 8px; }
+.form-nav { display: flex; gap: 8px; align-items: center; padding-top: 4px; }
+
+/* ─── RIGHT SIDEBAR ─── */
+.sidebar-r { display: flex; flex-direction: column; gap: 12px; }
+.sum-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sum-title { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; color: var(--gray-300); }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald-400); animation: pulse 2s infinite; }
+.sum-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+.sum-left { display: flex; align-items: center; gap: 8px; }
+.sum-icon { width: 28px; height: 28px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
+.sum-icon svg { width: 13px; height: 13px; }
+.sum-lbl { font-size: 0.78rem; color: var(--gray-400); }
+.sum-val { font-size: 0.85rem; font-weight: 700; color: var(--gray-100); }
+.sum-val.emerald { color: var(--emerald-400); }
+.sum-val.muted { color: var(--gray-600); }
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+.total-inner { padding: 12px; background: rgba(139,92,246,.08); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: space-between; }
+.total-lbl { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 2px; }
+.total-val { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg,var(--purple-400),var(--pink-400)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.sum-note { font-size: 0.68rem; color: var(--gray-700); text-align: center; padding-top: 6px; }
+.help-inner { display: flex; gap: 10px; }
+.help-ico { width: 28px; height: 28px; border-radius: var(--radius-md); background: rgba(59,130,246,.15); display: flex; align-items: center; justify-content: center; color: var(--blue-400); flex-shrink: 0; }
+.help-ico svg { width: 14px; height: 14px; }
+.help-title { font-size: 0.78rem; font-weight: 600; color: var(--gray-300); margin-bottom: 3px; }
+.help-p { font-size: 0.72rem; color: var(--gray-500); line-height: 1.5; }
+.stats-title { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--gray-600); margin-bottom: 10px; }
+.stat-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+.stat-lbl { font-size: 0.75rem; color: var(--gray-500); }
+.stat-val { font-size: 0.82rem; font-weight: 600; color: var(--gray-200); }
+.stat-val.emerald { color: var(--emerald-400); }
+.recent-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.recent-title { font-size: 0.78rem; font-weight: 600; color: var(--gray-300); }
+.recent-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; background: none; border: none; width: 100%; cursor: pointer; border-radius: var(--radius-md); color: inherit; transition: background var(--transition); }
+.recent-item:hover { background: rgba(75,85,99,.12); padding-left: 6px; padding-right: 6px; }
+.recent-meta { text-align: left; }
+.recent-date { font-size: 0.73rem; color: var(--gray-500); display: block; }
+.recent-amt { font-size: 0.82rem; font-weight: 600; color: var(--emerald-400); display: block; }
+.recent-hrs { font-size: 0.72rem; color: var(--gray-600); }
+.kbd-row { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--gray-600); }
+.kbd { padding: 2px 7px; background: var(--gray-800); border-radius: 5px; font-family: monospace; font-size: 0.72rem; color: var(--gray-400); }
+
+/* Wage section sub-parts */
+.wage-sub-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gray-600); padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.wage-seeded-hint { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--gray-600); margin-bottom: 10px; }
+.wage-seeded-hint svg { width: 12px; height: 12px; color: var(--gray-700); }
+
+@keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.animate-in { animation: slideIn 0.3s ease-out; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-700); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="app" id="root"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+const state = {
+  activeSection: 'date',
+  completedSections: [],
+  seededDate: true, // simulates being launched from calendar
+  formData: {
+    shift: {
+      date: '2024-11-01', // seeded from calendar
+      times: { start: null, end: null, breaks: [] },
+      tips: { amount: null, pools: [] },
+      wage: { startTime: null, endTime: null, hourlyRate: 6 },
+      team: { members: [], role: '', section: '' },
+      events: { items: [], shiftRating: null, busyLevel: null },
+      chump: { nominations: [], winner: '', notes: '' },
+      notes: { text: '', mood: null, tags: [] }
+    }
+  }
+};
+
+// ─────────────────────────────────────────────
+//  TIME PARSING ENGINE
+// ─────────────────────────────────────────────
+/**
+ * Parse shorthand time input → { h, m, meridiem } or null
+ * Rules:
+ *   "9"      → 9:00  (hour 9–11 → am, else pm by default)
+ *   "5"      → 5:00 pm
+ *   "530"    → 5:30 pm
+ *   "1730"   → 17:30 (military → known pm)
+ *   "9a","9p"→ forced meridiem
+ *   "120"    → 1:20 (not 12:00)
+ *   "10"     → 10:00
+ *   "12"     → 12:00
+ *   "1020"   → 10:20
+ */
+function parseTimeInput(raw) {
+  if (!raw || !raw.trim()) return null;
+  let s = raw.trim().toLowerCase().replace(/[:\s]/g, '');
+
+  // Extract forced meridiem suffix
+  let forcedMeridiem = null;
+  if (s.endsWith('am') || s.endsWith('a')) {
+    forcedMeridiem = 'am';
+    s = s.replace(/am$|a$/, '');
+  } else if (s.endsWith('pm') || s.endsWith('p')) {
+    forcedMeridiem = 'pm';
+    s = s.replace(/pm$|p$/, '');
+  }
+
+  if (!/^\d{1,4}$/.test(s)) return null;
+
+  const n = parseInt(s, 10);
+  let h, m;
+
+  if (s.length <= 2) {
+    // "5" → 5:00, "10" → 10:00, "17" → military
+    h = n;
+    m = 0;
+  } else if (s.length === 3) {
+    // "530" → 5:30, "130" → 1:30, "120" → 1:20
+    h = parseInt(s[0], 10);
+    m = parseInt(s.slice(1), 10);
+  } else {
+    // 4 digits: "1730" → 17:30, "1020" → 10:20, "0930" → 9:30
+    h = parseInt(s.slice(0, 2), 10);
+    m = parseInt(s.slice(2), 10);
+  }
+
+  if (m < 0 || m > 59) return null;
+  if (h < 0 || h > 23) return null;
+
+  // Military time (h >= 13) → pm known, no need to guess
+  const isMilitary = h >= 13;
+  const isMidnight = h === 0;
+
+  let resolvedH = h;
+  let meridiem;
+
+  if (isMilitary) {
+    // Already 24h
+    resolvedH = h;
+    meridiem = 'pm'; // just for display clarity (h stays as-is)
+  } else if (forcedMeridiem) {
+    meridiem = forcedMeridiem;
+    if (meridiem === 'pm' && h !== 12) resolvedH = h + 12;
+    if (meridiem === 'am' && h === 12) resolvedH = 0;
+  } else {
+    // Auto-guess: 9, 10, 11 → am; everything else → pm
+    if (h >= 9 && h <= 11) meridiem = 'am';
+    else if (h === 12) meridiem = 'pm'; // noon
+    else meridiem = 'pm';
+    if (meridiem === 'pm' && h < 12) resolvedH = h + 12;
+  }
+
+  if (resolvedH > 23) return null;
+
+  return { h: resolvedH, m, meridiem: isMilitary ? (h >= 12 ? 'pm' : 'am') : meridiem };
+}
+
+/**
+ * Given start time (24h int) and a raw end input,
+ * auto-determine am/pm for end so it's chronologically next.
+ */
+function parseEndTimeWithContext(raw, startH24) {
+  if (!raw || !raw.trim()) return null;
+  let s = raw.trim().toLowerCase().replace(/[:\s]/g, '');
+
+  // If explicit meridiem provided, just use normal parse
+  if (/[ap]m?$/.test(s)) return parseTimeInput(raw);
+
+  // Parse without context first
+  const parsed = parseTimeInput(raw);
+  if (!parsed) return null;
+
+  // If military, no ambiguity
+  const sMod = s.replace(/am$|a$|pm$|p$/, '');
+  if (sMod.length === 4 && parseInt(sMod.slice(0,2)) >= 13) return parsed;
+  if (sMod.length === 2 && parseInt(sMod) >= 13) return parsed;
+
+  // Ambiguous 12h input: try to figure out if it's after start
+  const rawH = parsed.h > 12 ? parsed.h - 12 : parsed.h; // canonical 1-12
+  const m = parsed.m;
+
+  // Try both am and pm interpretations
+  const asAM = rawH === 12 ? 0 : rawH;       // 12am → 0
+  const asPM = rawH === 12 ? 12 : rawH + 12; // 12pm → 12
+
+  if (startH24 === null || startH24 === undefined) {
+    // No context, use default guessing
+    return parsed;
+  }
+
+  // Compute minutes-from-start for each option
+  const startMins = startH24 * 60;
+  const amMins = asAM * 60 + m;
+  const pmMins = asPM * 60 + m;
+
+  // Handle crossing midnight: add 24h if end < start
+  const amDiff = amMins >= startMins ? amMins - startMins : amMins + 1440 - startMins;
+  const pmDiff = pmMins >= startMins ? pmMins - startMins : pmMins + 1440 - startMins;
+
+  // Pick the interpretation that results in the shorter forward span (but > 0)
+  // Rationale: 2am after 5pm = 9h span; 2pm after 5pm = 21h span → prefer 2am
+  // But if start is 10am and end input is 2 → 2pm (4h) vs 2am (16h) → prefer 2pm
+  let chosenH;
+  if (amDiff <= pmDiff) {
+    chosenH = asAM;
+  } else {
+    chosenH = asPM;
+  }
+
+  return { h: chosenH, m, meridiem: chosenH >= 12 ? 'pm' : 'am' };
+}
+
+function formatTime24(parsed) {
+  if (!parsed) return null;
+  return String(parsed.h).padStart(2,'0') + ':' + String(parsed.m).padStart(2,'0');
+}
+
+function formatTimeDisplay(time24) {
+  if (!time24) return null;
+  const [h, m] = time24.split(':').map(Number);
+  const meridiem = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return h12 + (m > 0 ? ':' + String(m).padStart(2,'0') : '') + ' ' + meridiem;
+}
+
+function previewTimeInput(raw, contextStartH24) {
+  // Returns { display, valid } for the hint line
+  if (!raw || !raw.trim()) return { display: '', valid: null };
+  const parsed = contextStartH24 !== undefined
+    ? parseEndTimeWithContext(raw, contextStartH24)
+    : parseTimeInput(raw);
+  if (!parsed) return { display: 'Not recognized', valid: false };
+  return { display: '→ ' + formatTimeDisplay(formatTime24(parsed)), valid: true };
+}
+
+// ─────────────────────────────────────────────
+//  DATE PARSING ENGINE
+// ─────────────────────────────────────────────
+const MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+const MONTH_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+
+function parseDateInput(raw) {
+  if (!raw || !raw.trim()) return null;
+  const s = raw.trim().toLowerCase();
+
+  // "today", "yesterday", "tomorrow"
+  const today = new Date();
+  if (s === 'today' || s === 't') return today;
+  if (s === 'yesterday' || s === 'y') { const d = new Date(today); d.setDate(d.getDate()-1); return d; }
+  if (s === 'tomorrow') { const d = new Date(today); d.setDate(d.getDate()+1); return d; }
+
+  // Try native parse first (handles ISO, "Nov 1", etc.)
+  const native = new Date(raw);
+  if (!isNaN(native.getTime()) && raw.trim().length > 4) return native;
+
+  // Numeric shortcuts: "1101" → Nov 1, "110124" → Nov 1 2024, "11/1", "11-1"
+  const numericFull = s.replace(/[-\/\.]/g, '');
+  if (/^\d{3,8}$/.test(numericFull)) {
+    const n = numericFull;
+    let mo, dy, yr = today.getFullYear();
+    if (n.length === 3) { mo = parseInt(n[0]); dy = parseInt(n.slice(1)); }
+    else if (n.length === 4) { mo = parseInt(n.slice(0,2)); dy = parseInt(n.slice(2)); }
+    else if (n.length === 6) { mo = parseInt(n.slice(0,2)); dy = parseInt(n.slice(2,4)); yr = 2000 + parseInt(n.slice(4)); }
+    else if (n.length === 8) { mo = parseInt(n.slice(0,2)); dy = parseInt(n.slice(2,4)); yr = parseInt(n.slice(4)); }
+    if (mo >= 1 && mo <= 12 && dy >= 1 && dy <= 31) {
+      const d = new Date(yr, mo-1, dy);
+      if (!isNaN(d.getTime())) return d;
+    }
+  }
+
+  // "Nov 1", "1 Nov", "November 1st"
+  for (let i = 0; i < 12; i++) {
+    const mo = MONTHS[i];
+    const ms = MONTH_SHORT[i];
+    const pat1 = new RegExp(`(${mo}|${ms})\\s+(\\d{1,2})(st|nd|rd|th)?`);
+    const pat2 = new RegExp(`(\\d{1,2})(st|nd|rd|th)?\\s+(${mo}|${ms})`);
+    let m;
+    if ((m = s.match(pat1))) {
+      const d = new Date(today.getFullYear(), i, parseInt(m[2]));
+      if (!isNaN(d.getTime())) return d;
+    }
+    if ((m = s.match(pat2))) {
+      const d = new Date(today.getFullYear(), i, parseInt(m[1]));
+      if (!isNaN(d.getTime())) return d;
+    }
+  }
+
+  return null;
+}
+
+function formatDateDisplay(iso) {
+  if (!iso) return null;
+  const [yr, mo, dy] = iso.split('-').map(Number);
+  const d = new Date(yr, mo-1, dy);
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return { full: months[mo-1] + ' ' + dy + ', ' + yr, day: days[d.getDay()] };
+}
+
+function dateToISO(d) {
+  const yr = d.getFullYear();
+  const mo = String(d.getMonth()+1).padStart(2,'0');
+  const dy = String(d.getDate()).padStart(2,'0');
+  return `${yr}-${mo}-${dy}`;
+}
+
+function previewDateInput(raw) {
+  if (!raw || !raw.trim()) return { display: '', valid: null };
+  const d = parseDateInput(raw);
+  if (!d) return { display: 'Not recognized', valid: false };
+  const fmt = formatDateDisplay(dateToISO(d));
+  return { display: '→ ' + fmt.day + ', ' + fmt.full, valid: true };
+}
+
+// ─────────────────────────────────────────────
+//  CALCULATIONS
+// ─────────────────────────────────────────────
+function calcDuration(start, end) {
+  if (!start || !end) return null;
+  const [sh,sm] = start.split(':').map(Number);
+  const [eh,em] = end.split(':').map(Number);
+  let d = (eh + em/60) - (sh + sm/60);
+  if (d < 0) d += 24;
+  if (d === 0) return null;
+  return d;
+}
+
+function calcDurationDisplay(start, end) {
+  const d = calcDuration(start, end);
+  if (d === null) return '—';
+  return d.toFixed(1);
+}
+
+function calcTotal() {
+  const tips = state.formData.shift.tips.amount || 0;
+  const w = state.formData.shift.wage;
+  const start = w.startTime || state.formData.shift.times.start;
+  const end = w.endTime || state.formData.shift.times.end;
+  const dur = calcDuration(start, end) || 0;
+  const wageEarnings = (w.hourlyRate || 0) * dur;
+  return tips + wageEarnings;
+}
+
+function calcProgress() {
+  // Only date is truly required; times/wage/tips can be partial
+  let score = 0;
+  if (state.formData.shift.date) score++;
+  return Math.round((score / 1) * 100);
+}
+
+function poolTotal() {
+  return state.formData.shift.tips.pools.reduce((s,p) => s + (parseFloat(p.amount)||0), 0);
+}
+
+const busyLabels = ['Dead','Slow','Moderate','Busy','Slammed'];
+const ratingLabels = ['Rough','Below Avg','Average','Good','Great'];
+
+// ─────────────────────────────────────────────
+//  SVG HELPERS
+// ─────────────────────────────────────────────
+const svgs = {
+  clock: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>`,
+  dollar: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`,
+  money: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>`,
+  users: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>`,
+  calendar: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>`,
+  star: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>`,
+  edit: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>`,
+  check: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>`,
+  chevL: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>`,
+  chevR: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>`,
+  info: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`,
+  bulb: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>`,
+  trend: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>`,
+  settings: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>`,
+  bolt: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>`,
+  pencil: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>`,
+};
+
+function svg(key, size=16) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" fill="none" stroke="currentColor" viewBox="0 0 24 24">${svgs[key]}</svg>`;
+}
+
+// ─────────────────────────────────────────────
+//  SECTIONS CONFIG
+// ─────────────────────────────────────────────
+const sections = [
+  { id:'date',  name:'Date',  icon:'calendar', required:true,  color:'blue'   },
+  { id:'times', name:'Times', icon:'clock',    required:false, color:'purple' },
+  { id:'tips',  name:'Tips',  icon:'dollar',   required:false, color:'amber'  },
+  { id:'wage',  name:'Wage',  icon:'money',    required:false, color:'emerald'},
+  { id:'team',  name:'Team',  icon:'users',    required:false, color:'blue'   },
+  { id:'events',name:'Events',icon:'calendar', required:false, color:'purple' },
+  { id:'chump', name:'Chump', icon:'star',     required:false, color:'pink'   },
+  { id:'notes', name:'Notes', icon:'edit',     required:false, color:'yellow' },
+];
+const sectionOrder = sections.map(s=>s.id);
+
+// ─────────────────────────────────────────────
+//  SMART TIME FIELD COMPONENT (rendered as HTML)
+// ─────────────────────────────────────────────
+function renderSmartTimeField({ id, label, value, required, isEnd, startValue }) {
+  const displayVal = value ? formatTimeDisplay(value) : null;
+  const req = required ? `<span class="required">*</span>` : `<span class="optional">(Optional)</span>`;
+  return `
+    <div class="form-group">
+      <label class="form-label">${label} ${req}</label>
+      <div class="time-field-wrap">
+        <div class="smart-time-display ${displayVal ? '' : ''}" id="disp-${id}" onclick="activateTimeField('${id}')">
+          ${displayVal
+            ? `<span class="time-val">${displayVal}</span>`
+            : `<span class="time-empty">—</span>`
+          }
+          <span class="time-edit-hint">${svg('pencil', 12)}</span>
+        </div>
+        <input
+          class="smart-time-input"
+          id="input-${id}"
+          type="text"
+          inputmode="numeric"
+          placeholder="e.g. 5, 530, 17, 9a…"
+          autocomplete="off"
+          onblur="commitTimeField('${id}', '${isEnd ? 'end' : 'start'}')"
+          oninput="livePreviewTime('${id}', ${isEnd ? 'true' : 'false'})"
+          onkeydown="timeFieldKeydown(event, '${id}', '${isEnd ? 'end' : 'start'}')"
+        >
+      </div>
+      <div class="time-parse-hint dim" id="hint-${id}">Type shorthand: 5 → 5:00 PM, 9 → 9:00 AM, 1730 → 5:30 PM</div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────
+//  SMART DATE FIELD COMPONENT
+// ─────────────────────────────────────────────
+function renderSmartDateField() {
+  const iso = state.formData.shift.date;
+  const seeded = state.seededDate;
+  const fmt = iso ? formatDateDisplay(iso) : null;
+
+  return `
+    <div class="form-group" style="max-width:360px;">
+      <label class="form-label" style="margin-bottom:4px;">
+        Shift Date <span class="required">*</span>
+      </label>
+      <div class="date-field-wrap">
+        <div class="smart-date-display ${seeded ? 'seeded' : ''} ${iso ? '' : ''}" id="disp-date" onclick="activateDateField()">
+          <div style="flex:1;">
+            ${fmt
+              ? `<div class="date-val">${fmt.full}</div><div class="date-day">${fmt.day}</div>`
+              : `<div class="date-val" style="color:var(--gray-600);font-weight:400;font-style:italic">No date set</div>`
+            }
+          </div>
+          ${seeded && iso ? `<span class="seeded-badge">from calendar</span>` : ''}
+          <button class="date-picker-btn" onclick="event.stopPropagation();openDatePicker()" title="Open date picker">
+            ${svg('calendar', 12)}
+            Pick
+            <input type="date" id="native-date-picker" style="position:absolute;opacity:0;width:100%;height:100%;top:0;left:0;cursor:pointer;" onchange="nativeDatePicked(this.value)" value="${iso || ''}">
+          </button>
+        </div>
+        <input
+          class="smart-date-input"
+          id="input-date"
+          type="text"
+          placeholder="Nov 1, today, 1101, 11/1…"
+          autocomplete="off"
+          onblur="commitDateField()"
+          oninput="livePreviewDate()"
+          onkeydown="dateFieldKeydown(event)"
+        >
+      </div>
+      <div class="date-parse-hint dim" id="hint-date">Type a date or use the picker →</div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+function render() {
+  const fd = state.formData;
+  const startT = fd.shift.times.start;
+  const endT = fd.shift.times.end;
+  const dur = calcDurationDisplay(startT, endT);
+  const total = calcTotal();
+  const pct = calcProgress();
+
+  // Nav sub-labels
+  function navSub(id) {
+    if (id === 'date') {
+      const fmt = fd.shift.date ? formatDateDisplay(fd.shift.date) : null;
+      return fmt ? `<div class="nav-sub">${fmt.full}</div>` : `<div class="nav-sub">Not set</div>`;
+    }
+    if (id === 'times') {
+      const s = fd.shift.times.start ? formatTimeDisplay(fd.shift.times.start) : null;
+      const e = fd.shift.times.end ? formatTimeDisplay(fd.shift.times.end) : null;
+      if (s && e) return `<div class="nav-sub">${s} – ${e}</div>`;
+      if (s) return `<div class="nav-sub">${s} – ?</div>`;
+      return `<div class="nav-sub">Not set</div>`;
+    }
+    if (id === 'tips') {
+      return fd.shift.tips.amount !== null
+        ? `<div class="nav-sub emerald">$${fd.shift.tips.amount}</div>`
+        : `<div class="nav-sub">Not logged</div>`;
+    }
+    if (id === 'wage') {
+      const wStart = fd.shift.wage.startTime || startT;
+      const wEnd = fd.shift.wage.endTime || endT;
+      const d = calcDuration(wStart, wEnd);
+      return d !== null && fd.shift.wage.hourlyRate
+        ? `<div class="nav-sub emerald">$${(fd.shift.wage.hourlyRate * d).toFixed(2)}</div>`
+        : `<div class="nav-sub">Not set</div>`;
+    }
+    return '';
+  }
+
+  function isCompleted(id) {
+    if (id === 'date') return !!fd.shift.date;
+    if (id === 'times') return !!(fd.shift.times.start || fd.shift.times.end);
+    if (id === 'tips') return fd.shift.tips.amount !== null;
+    if (id === 'wage') return !!(fd.shift.wage.hourlyRate);
+    return state.completedSections.includes(id);
+  }
+
+  // Wage calc for summary
+  const wStart = fd.shift.wage.startTime || startT;
+  const wEnd = fd.shift.wage.endTime || endT;
+  const wageDur = calcDuration(wStart, wEnd);
+  const wageEarnings = wageDur !== null && fd.shift.wage.hourlyRate
+    ? (fd.shift.wage.hourlyRate * wageDur).toFixed(2)
+    : null;
+
+  document.getElementById('root').innerHTML = `
+  <div class="app">
+    <div class="header">
+      <div>
+        <div class="header-title">Shift Entry</div>
+        <div class="header-sub">${fd.shift.date ? (() => { const f = formatDateDisplay(fd.shift.date); return f.day + ', ' + f.full; })() : 'New Shift'}</div>
+      </div>
+      <div class="header-btns">
+        <button class="icon-btn" title="Settings">${svg('settings',18)}</button>
+        <button class="icon-btn" title="Help">${svg('info',18)}</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT SIDEBAR -->
+      <aside class="sidebar-l">
+        <div class="sticky">
+          <div class="card card-pad">
+            <div class="prog-header">
+              <span class="prog-label">Progress</span>
+              <span class="prog-pct">${pct}%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+            <div class="prog-stats">
+              <span>Date ${fd.shift.date ? '✓' : '—'}</span>
+              <span>${['times','tips','wage','team','events','chump','notes'].filter(id => isCompleted(id)).length} sections filled</span>
+            </div>
+          </div>
+
+          <div class="card card-pad" style="display:flex;flex-direction:column;gap:12px;">
+            <div class="nav-group">
+              <div class="group-label"><span class="badge badge-red">Required</span></div>
+              ${sections.filter(s=>s.required).map(s => `
+                <button class="nav-item ${state.activeSection===s.id?'active':''}" onclick="setSection('${s.id}')">
+                  <div class="nav-icon bg-${s.color}">${svg(s.icon,16)}</div>
+                  <div class="nav-text">
+                    <div class="nav-title">${s.name}</div>
+                    ${navSub(s.id)}
+                  </div>
+                  ${isCompleted(s.id) ? `<span class="check">${svg('check',15)}</span>` : ''}
+                </button>
+              `).join('')}
+            </div>
+            <div class="nav-group">
+              <div class="group-label"><span class="badge badge-blue">Optional</span></div>
+              ${sections.filter(s=>!s.required).map(s => `
+                <button class="nav-item nav-item-sm ${state.activeSection===s.id?'active':''}" onclick="setSection('${s.id}')">
+                  <div class="nav-icon nav-icon-sm bg-${s.color}">${svg(s.icon,13)}</div>
+                  <div class="nav-text">
+                    <div class="nav-title">${s.name}</div>
+                    ${navSub(s.id)}
+                  </div>
+                  ${isCompleted(s.id) ? `<span class="check">${svg('check',13)}</span>` : ''}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="sidebar-actions">
+            <button class="btn btn-primary full" onclick="handleSave()">Save Shift</button>
+            <button class="btn btn-secondary full">Save as Draft</button>
+            <button class="btn btn-text full">Discard Changes</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN FORM -->
+      <main class="main">
+        ${renderSection(dur, wageEarnings, wageDur)}
+      </main>
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="sidebar-r">
+        <div class="sticky">
+          <div class="card card-pad">
+            <div class="sum-hdr">
+              <div class="sum-title"><span>Live Summary</span><div class="live-dot"></div></div>
+            </div>
+            <div class="sum-item">
+              <div class="sum-left">
+                <div class="sum-icon bg-blue">${svg('calendar',13)}</div>
+                <span class="sum-lbl">Date</span>
+              </div>
+              <span class="sum-val ${!fd.shift.date ? 'muted' : ''}">${fd.shift.date ? (() => { const f=formatDateDisplay(fd.shift.date); return f.full; })() : '—'}</span>
+            </div>
+            <div class="divider"></div>
+            <div class="sum-item">
+              <div class="sum-left">
+                <div class="sum-icon bg-purple">${svg('clock',13)}</div>
+                <span class="sum-lbl">Duration</span>
+              </div>
+              <span class="sum-val ${dur === '—' ? 'muted' : ''}">${dur === '—' ? '—' : dur + ' hrs'}</span>
+            </div>
+            <div class="divider"></div>
+            <div class="sum-item">
+              <div class="sum-left">
+                <div class="sum-icon bg-amber">${svg('dollar',13)}</div>
+                <span class="sum-lbl">Tips</span>
+              </div>
+              <span class="sum-val ${fd.shift.tips.amount === null ? 'muted' : 'emerald'}">${fd.shift.tips.amount !== null ? '$' + fd.shift.tips.amount : '—'}</span>
+            </div>
+            <div class="divider"></div>
+            <div class="sum-item" style="${!wageEarnings ? 'opacity:.4' : ''}">
+              <div class="sum-left">
+                <div class="sum-icon bg-emerald">${svg('money',13)}</div>
+                <span class="sum-lbl">Wage</span>
+              </div>
+              <span class="sum-val ${wageEarnings ? 'emerald' : 'muted'}">${wageEarnings ? '$' + wageEarnings : '—'}</span>
+            </div>
+            <div style="margin-top:12px;">
+              <div class="total-inner">
+                <div>
+                  <div class="total-lbl">Total Earnings</div>
+                  <div class="total-val">$${total.toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+            <div class="sum-note">Updates automatically</div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="help-inner">
+              <div class="help-ico">${svg('bulb',14)}</div>
+              <div>
+                <div class="help-title">Time Shortcuts</div>
+                <p class="help-p">Type <strong>5</strong> → 5:00 PM · <strong>9</strong> → 9:00 AM · <strong>530</strong> → 5:30 PM · <strong>1730</strong> → 5:30 PM · <strong>9a</strong> or <strong>2p</strong> to force AM/PM</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="stats-title">Quick Stats</div>
+            <div class="stat-row"><span class="stat-lbl">This Week</span><span class="stat-val">$1,847</span></div>
+            <div class="stat-row"><span class="stat-lbl">This Month</span><span class="stat-val">$7,234</span></div>
+            <div class="stat-row"><span class="stat-lbl">Avg per Shift</span><span class="stat-val emerald">$482</span></div>
+          </div>
+
+          <div class="card card-pad">
+            <div class="recent-hdr">
+              <span class="recent-title">Recent Shifts</span>
+              <button class="btn-link">View All</button>
+            </div>
+            ${[['Oct 25 · Night','$512','8.0'],['Oct 24 · Day','$387','7.5'],['Oct 22 · Night','$456','8.5']].map(([d,a,h])=>`
+              <div class="recent-item">
+                <div class="recent-meta">
+                  <span class="recent-date">${d}</span>
+                  <span class="recent-amt">${a}</span>
+                </div>
+                <span class="recent-hrs">${h} hrs</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="card card-pad" style="background:rgba(31,41,55,.3)">
+            <div class="kbd-row">
+              ${svg('bolt',13)}
+              <span>Press <kbd class="kbd">⌘ + S</kbd> to save</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+//  SECTION RENDERERS
+// ─────────────────────────────────────────────
+function renderSection(dur, wageEarnings, wageDur) {
+  const fd = state.formData;
+  const sec = state.activeSection;
+
+  // ── DATE ──
+  if (sec === 'date') {
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row">
+            <h2 class="section-title">Shift Date</h2>
+            <span class="badge badge-red">Required</span>
+          </div>
+          <div class="section-sub">When did this shift take place?</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        ${renderSmartDateField()}
+        ${fd.shift.date ? `
+          <div class="duration-bar" style="border-color:rgba(96,165,250,.25);background:rgba(96,165,250,.06)">
+            <div class="duration-left">
+              <div class="duration-dot" style="background:var(--blue-400)"></div>
+              <div>
+                <div class="duration-label">${(() => { const f=formatDateDisplay(fd.shift.date); return f.day; })()}</div>
+                <div class="duration-note">${(() => { const f=formatDateDisplay(fd.shift.date); return f.full; })()}</div>
+              </div>
+            </div>
+            <div class="duration-val" style="background:linear-gradient(135deg,var(--blue-400),var(--blue-300));-webkit-background-clip:text">${svg('calendar',22)}</div>
+          </div>` : ''}
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" disabled style="opacity:0.3;cursor:default">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Times ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── TIMES ──
+  if (sec === 'times') {
+    const startH24 = fd.shift.times.start ? parseInt(fd.shift.times.start.split(':')[0]) : null;
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row">
+            <h2 class="section-title">Shift Times</h2>
+            <span class="badge badge-purple">Optional</span>
+          </div>
+          <div class="section-sub">When did your shift start and end? You can fill this in later.</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div class="form-grid">
+          ${renderSmartTimeField({ id: 'start', label: 'Start Time', value: fd.shift.times.start, required: false, isEnd: false })}
+          ${renderSmartTimeField({ id: 'end', label: 'End Time', value: fd.shift.times.end, required: false, isEnd: true, startValue: startH24 })}
+        </div>
+
+        ${(fd.shift.times.start || fd.shift.times.end) ? `
+          <div class="duration-bar">
+            <div class="duration-left">
+              <div class="duration-dot"></div>
+              <div>
+                <div class="duration-label">Shift Duration</div>
+                <div class="duration-note">${
+                  fd.shift.times.start && fd.shift.times.end
+                    ? (calcDuration(fd.shift.times.start, fd.shift.times.end) < 0 || parseInt(fd.shift.times.end.split(':')[0]) < parseInt(fd.shift.times.start.split(':')[0]) ? 'Overnight shift' : 'Same-day shift')
+                    : 'Partial — fill in both times to see duration'
+                }</div>
+              </div>
+            </div>
+            <div class="duration-val">${dur} hrs</div>
+          </div>` : ''}
+
+        <div>
+          <div class="breaks-header" style="margin-bottom:10px;">
+            <label class="form-label">Break Time <span class="optional">(Optional)</span></label>
+            <button class="btn-link" onclick="addBreak()">+ Add Break</button>
+          </div>
+          ${fd.shift.times.breaks.map((b,i) => `
+            <div class="card break-card" style="margin-bottom:8px;">
+              <div class="break-grid">
+                <div class="form-group">
+                  <label class="form-label-sm">Break Start</label>
+                  ${renderSmartTimeField({ id: 'brk-start-'+i, label: '', value: b.start, required: false, isEnd: false })}
+                </div>
+                <div class="form-group">
+                  <label class="form-label-sm">Break End</label>
+                  ${renderSmartTimeField({ id: 'brk-end-'+i, label: '', value: b.end, required: false, isEnd: true })}
+                </div>
+                <div style="display:flex;align-items:flex-end;padding-bottom:20px;">
+                  <button class="btn-danger" onclick="removeBreak(${i})">Remove</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div>
+          <div class="suggest-hdr">${svg('bulb',15)}<span>Smart Suggestions</span></div>
+          <div class="card suggest-card">
+            <div class="suggest-inner">
+              <div class="suggest-icon">${svg('trend',15)}</div>
+              <div style="flex:1">
+                <div class="suggest-row">
+                  <h4>Use your typical Friday pattern?</h4>
+                  <span class="badge badge-blue">Recommended</span>
+                </div>
+                <p class="suggest-p">Based on your last 8 Friday shifts, you typically work 5:00 PM – 1:00 AM (8 hours)</p>
+                <div class="suggest-btns">
+                  <button class="btn btn-ghost-blue" onclick="applyPattern()">Apply Times</button>
+                  <button class="btn btn-text">Dismiss</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Tips ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── TIPS ──
+  if (sec === 'tips') {
+    const hasTips = fd.shift.tips.amount !== null;
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row">
+            <h2 class="section-title">Tips &amp; Earnings</h2>
+            <span class="badge badge-amber">Optional</span>
+          </div>
+          <div class="section-sub">Record your tip earnings. Leave blank if not yet known.</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div class="form-group">
+          <label class="form-label">Total Tips <span class="optional">(leave blank if not yet logged)</span></label>
+          <div class="input-wrap form-input-prefix">
+            <span class="prefix-sym">$</span>
+            <input type="number" class="form-input form-input-lg" value="${hasTips ? fd.shift.tips.amount : ''}" oninput="updateTips(this.value)" name="shift[tips][amount]" placeholder="—">
+          </div>
+        </div>
+
+        <div>
+          <div class="pools-header" style="margin-bottom:10px;">
+            <label class="form-label">Tip Pool Breakdown <span class="optional">(Optional)</span></label>
+            <button class="btn-link" onclick="addPool()">+ Add Pool</button>
+          </div>
+          ${fd.shift.tips.pools.map((p,i) => {
+            const pct2 = hasTips && fd.shift.tips.amount > 0 ? Math.round((p.amount / fd.shift.tips.amount) * 100) : 0;
+            return `<div class="card pool-card" style="margin-bottom:8px;">
+              <div class="pool-grid">
+                <div class="form-group">
+                  <input type="text" class="form-input" value="${p.name}" oninput="updatePool(${i},'name',this.value)" placeholder="Pool name">
+                </div>
+                <div class="form-group form-input-prefix" style="position:relative">
+                  <span class="prefix-sym" style="top:50%;transform:translateY(-50%);">$</span>
+                  <input type="number" class="form-input" style="padding-left:22px" value="${p.amount}" oninput="updatePool(${i},'amount',parseFloat(this.value)||0)" placeholder="0.00">
+                </div>
+                <div style="display:flex;align-items:center;">
+                  <button class="btn-danger" onclick="removePool(${i})">×</button>
+                </div>
+              </div>
+              <div class="pool-bar"><div class="pool-fill" style="width:${pct2}%"></div></div>
+              <div style="font-size:0.68rem;color:var(--gray-600);margin-top:3px;">${pct2}% of total</div>
+            </div>`;
+          }).join('')}
+          ${fd.shift.tips.pools.length > 0 && hasTips ? `
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-500);padding:4px 2px;">
+              <span>Pool total: <strong style="color:${poolTotal()===fd.shift.tips.amount?'var(--emerald-400)':'var(--amber-400)'}">${poolTotal() === fd.shift.tips.amount ? '✓ Balanced' : `$${poolTotal()} of $${fd.shift.tips.amount}`}</strong></span>
+            </div>` : ''}
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Wage ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── WAGE ──
+  if (sec === 'wage') {
+    const w = fd.shift.wage;
+    const mainStart = fd.shift.times.start;
+    const mainEnd = fd.shift.times.end;
+    // Effective wage times: override or fall back to main times
+    const effectiveStart = w.startTime || mainStart;
+    const effectiveEnd = w.endTime || mainEnd;
+    const wDur = calcDuration(effectiveStart, effectiveEnd);
+    const wDurDisplay = wDur !== null ? wDur.toFixed(1) : null;
+    const wStartH24 = effectiveStart ? parseInt(effectiveStart.split(':')[0]) : null;
+    const wEarnings = wDur !== null && w.hourlyRate ? (w.hourlyRate * wDur).toFixed(2) : null;
+
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row">
+            <h2 class="section-title">Wage</h2>
+            <span class="badge badge-emerald">Optional</span>
+          </div>
+          <div class="section-sub">Your hourly pay. Seeded from shift times — override if your clock-in differs.</div>
+        </div>
+      </div>
+      <div class="card form-card">
+
+        <!-- Hours Sub-section -->
+        <div>
+          <div class="wage-sub-label">Hours Worked</div>
+          <div class="wage-seeded-hint">
+            ${svg('clock', 12)}
+            <span>Seeded from shift times${mainStart && mainEnd ? ` (${formatTimeDisplay(mainStart)} – ${formatTimeDisplay(mainEnd)})` : mainStart ? ` (${formatTimeDisplay(mainStart)} – ?)` : ' — no times set yet'}. Edit below to override.</span>
+          </div>
+          <div class="form-grid" style="margin-bottom:12px;">
+            ${renderSmartTimeField({ id: 'wage-start', label: 'Wage Start', value: effectiveStart, required: false, isEnd: false })}
+            ${renderSmartTimeField({ id: 'wage-end', label: 'Wage End', value: effectiveEnd, required: false, isEnd: true, startValue: wStartH24 })}
+          </div>
+          ${wDurDisplay ? `
+            <div class="duration-bar" style="border-color:rgba(16,185,129,.2);background:rgba(16,185,129,.05)">
+              <div class="duration-left">
+                <div class="duration-dot" style="background:var(--emerald-400)"></div>
+                <div>
+                  <div class="duration-label">Wage Hours</div>
+                  <div class="duration-note">${formatTimeDisplay(effectiveStart) || '?'} → ${formatTimeDisplay(effectiveEnd) || '?'}</div>
+                </div>
+              </div>
+              <div class="duration-val" style="background:linear-gradient(135deg,var(--emerald-400),#10b981);-webkit-background-clip:text">${wDurDisplay} hrs</div>
+            </div>` : `
+            <div class="duration-bar" style="border-color:rgba(75,85,99,.2);background:rgba(75,85,99,.05);opacity:0.5">
+              <div class="duration-left">
+                <div class="duration-dot" style="background:var(--gray-600)"></div>
+                <div>
+                  <div class="duration-label">Wage Hours</div>
+                  <div class="duration-note">Set both times to calculate</div>
+                </div>
+              </div>
+              <div class="duration-val" style="background:var(--gray-600);-webkit-background-clip:text;color:var(--gray-600);">—</div>
+            </div>`}
+        </div>
+
+        <!-- Hourly Rate Sub-section -->
+        <div>
+          <div class="wage-sub-label">Hourly Rate</div>
+          <div class="form-group" style="max-width:200px;">
+            <label class="form-label">Rate per Hour</label>
+            <div class="input-wrap form-input-prefix" style="position:relative">
+              <span class="prefix-sym">$</span>
+              <input type="number" class="form-input" style="padding-left:22px;font-size:1.1rem;font-weight:700;" value="${w.hourlyRate !== null ? w.hourlyRate : ''}" oninput="updateWageRate(parseFloat(this.value)||null)" placeholder="—" step="0.25">
+            </div>
+            <span style="font-size:0.7rem;color:var(--gray-600)">Seeded to $6.00</span>
+          </div>
+        </div>
+
+        <!-- Total calculation -->
+        ${wEarnings ? `
+          <div class="duration-bar" style="border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.07)">
+            <div class="duration-left">
+              <div class="duration-dot" style="background:var(--emerald-400)"></div>
+              <div>
+                <div class="duration-label">Wage Earnings</div>
+                <div class="duration-note">$${w.hourlyRate}/hr × ${wDurDisplay} hrs</div>
+              </div>
+            </div>
+            <div class="duration-val" style="background:linear-gradient(135deg,var(--emerald-400),#10b981);-webkit-background-clip:text">$${wEarnings}</div>
+          </div>` : `
+          <div class="duration-bar" style="border-color:rgba(75,85,99,.15);background:rgba(75,85,99,.04);opacity:0.5">
+            <div class="duration-left">
+              <div class="duration-dot" style="background:var(--gray-600)"></div>
+              <div>
+                <div class="duration-label">Wage Earnings</div>
+                <div class="duration-note">Need hours + rate to calculate</div>
+              </div>
+            </div>
+            <div class="duration-val" style="-webkit-text-fill-color:var(--gray-600)">—</div>
+          </div>`}
+
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Team ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── TEAM ──
+  if (sec === 'team') {
+    const team = fd.shift.team;
+    const presetRoles = ['Server','Bartender','Host','Busser','Runner','Barback','Manager'];
+    const presetSections = ['Bar','Floor','Patio','Private Dining','Takeout'];
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row"><h2 class="section-title">Team</h2><span class="badge badge-blue">Optional</span></div>
+          <div class="section-sub">Who did you work with tonight?</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Your Role <span class="optional">(Optional)</span></label>
+            <input type="text" class="form-input" value="${team.role||''}" oninput="updateTeam('role',this.value)" placeholder="e.g. Server, Bartender…">
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;">
+              ${presetRoles.map(r=>`<button onclick="updateTeam('role','${r}')" style="padding:3px 8px;border-radius:999px;font-size:0.7rem;border:1px solid ${team.role===r?'rgba(139,92,246,.5)':'var(--border)'};background:${team.role===r?'rgba(139,92,246,.12)':'transparent'};color:${team.role===r?'var(--purple-400)':'var(--gray-500)'};cursor:pointer;transition:all 0.15s;">${r}</button>`).join('')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section / Station <span class="optional">(Optional)</span></label>
+            <input type="text" class="form-input" value="${team.section||''}" oninput="updateTeam('section',this.value)" placeholder="e.g. Bar, Floor, Patio…">
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;">
+              ${presetSections.map(s=>`<button onclick="updateTeam('section','${s}')" style="padding:3px 8px;border-radius:999px;font-size:0.7rem;border:1px solid ${team.section===s?'rgba(139,92,246,.5)':'var(--border)'};background:${team.section===s?'rgba(139,92,246,.12)':'transparent'};color:${team.section===s?'var(--purple-400)':'var(--gray-500)'};cursor:pointer;transition:all 0.15s;">${s}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="breaks-header" style="margin-bottom:10px;">
+            <label class="form-label">Team Members <span class="optional">(Optional)</span></label>
+            <button class="btn-link" onclick="addTeamMember()">+ Add</button>
+          </div>
+          ${team.members.map((m,i)=>`
+            <div class="card break-card" style="margin-bottom:8px;">
+              <div class="break-grid">
+                <div class="form-group">
+                  <label class="form-label-sm">Name</label>
+                  <input type="text" class="form-input" value="${m.name||''}" oninput="updateTeamMember(${i},'name',this.value)" placeholder="Name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label-sm">Role</label>
+                  <input type="text" class="form-input" value="${m.role||''}" oninput="updateTeamMember(${i},'role',this.value)" placeholder="Role">
+                </div>
+                <div style="display:flex;align-items:flex-end;">
+                  <button class="btn-danger" onclick="removeTeamMember(${i})">Remove</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Events ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── EVENTS ──
+  if (sec === 'events') {
+    const ev = fd.shift.events;
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row"><h2 class="section-title">Events</h2><span class="badge badge-purple">Optional</span></div>
+          <div class="section-sub">Notable moments from tonight's shift</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Busy Level <span class="optional">(Optional)</span></label>
+            <div style="display:flex;gap:6px;">
+              ${busyLabels.map((lbl,i)=>`<button onclick="updateEvents('busyLevel',${i+1})" style="flex:1;padding:6px 4px;border-radius:var(--radius-md);font-size:0.65rem;font-weight:600;cursor:pointer;border:1px solid ${ev.busyLevel===i+1?'rgba(245,158,11,.5)':'var(--border)'};background:${ev.busyLevel===i+1?'rgba(245,158,11,.12)':'transparent'};color:${ev.busyLevel===i+1?'var(--amber-400)':'var(--gray-500)'};transition:all 0.15s;">${lbl}</button>`).join('')}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Shift Rating <span class="optional">(Optional)</span></label>
+            <div style="display:flex;gap:4px;">
+              ${[1,2,3,4,5].map(n=>`<button onclick="updateEvents('shiftRating',${n})" style="flex:1;padding:8px 4px;border-radius:var(--radius-md);font-size:0.85rem;cursor:pointer;border:1px solid ${n<=(ev.shiftRating||0)?'rgba(245,158,11,.4)':'var(--border)'};background:${n<=(ev.shiftRating||0)?'rgba(245,158,11,.1)':'transparent'};color:${n<=(ev.shiftRating||0)?'var(--amber-400)':'var(--gray-600)'};transition:all 0.1s;">★</button>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="breaks-header" style="margin-bottom:10px;">
+            <label class="form-label">Notable Events <span class="optional">(Optional)</span></label>
+            <button class="btn-link" onclick="addEvent()">+ Add Event</button>
+          </div>
+          ${ev.items.map((item,i)=>`
+            <div class="card break-card" style="margin-bottom:8px;">
+              <div style="display:grid;grid-template-columns:130px 1fr auto;gap:10px;align-items:end;">
+                <div class="form-group">
+                  <label class="form-label-sm">Time</label>
+                  ${renderSmartTimeField({ id: 'evt-'+i, label: '', value: item.time, required: false, isEnd: false })}
+                </div>
+                <div class="form-group">
+                  <label class="form-label-sm">Description</label>
+                  <input type="text" class="form-input" value="${item.desc||''}" oninput="updateEvent(${i},'desc',this.value)" placeholder="e.g. Large party of 14…">
+                </div>
+                <div style="display:flex;align-items:flex-end;">
+                  <button class="btn-danger" onclick="removeEvent(${i})">Remove</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Chump ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── CHUMP ──
+  if (sec === 'chump') {
+    const ch = fd.shift.chump;
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row"><h2 class="section-title">Chump</h2><span class="badge badge-blue">Optional</span></div>
+          <div class="section-sub">Who was tonight's table from hell?</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div>
+          <div class="breaks-header" style="margin-bottom:10px;">
+            <label class="form-label">Nominations <span class="optional">(Optional)</span></label>
+            <button class="btn-link" onclick="addNomination()">+ Add Nomination</button>
+          </div>
+          ${ch.nominations.length === 0 ? `
+            <div style="padding:20px;text-align:center;color:var(--gray-600);font-size:0.8rem;border:1px dashed var(--border);border-radius:var(--radius-lg);">
+              🏆 No nominations yet — hopefully it was a good night
+            </div>` : ''}
+          ${ch.nominations.map((n,i)=>`
+            <div class="card pool-card" style="margin-bottom:8px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
+                <div class="form-group">
+                  <label class="form-label-sm">Table / Guest</label>
+                  <input type="text" class="form-input" value="${n.label||''}" oninput="updateNomination(${i},'label',this.value)" placeholder="Table 12, party of 6…">
+                </div>
+                <div class="form-group">
+                  <label class="form-label-sm">Offence</label>
+                  <input type="text" class="form-input" value="${n.reason||''}" oninput="updateNomination(${i},'reason',this.value)" placeholder="10% tip, rude…">
+                </div>
+                <div style="display:flex;align-items:flex-end;">
+                  <button class="btn-danger" onclick="removeNomination(${i})">Remove</button>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+                <label class="form-label-sm" style="white-space:nowrap">Severity:</label>
+                ${[1,2,3,4,5].map(s=>`<button onclick="updateNomination(${i},'severity',${s})" style="background:none;border:none;cursor:pointer;font-size:1rem;color:${s<=(n.severity||0)?'var(--pink-400)':'var(--gray-700)'};transition:color 0.1s">💀</button>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        ${ch.nominations.length > 1 ? `
+          <div class="form-group">
+            <label class="form-label">Crown the Chump <span class="optional">(Optional)</span></label>
+            <select class="form-input" onchange="updateChump('winner',this.value)">
+              <option value="">Select winner…</option>
+              ${ch.nominations.map((n,i)=>`<option value="${i}" ${ch.winner==i?'selected':''}>${n.label||'Nomination '+(i+1)}</option>`).join('')}
+            </select>
+          </div>` : ''}
+        <div class="form-group">
+          <label class="form-label">Staff Notes <span class="optional">(Optional)</span></label>
+          <textarea class="form-input" rows="2" placeholder="Anything management should know…" oninput="updateChump('notes',this.value)" style="resize:vertical;">${ch.notes||''}</textarea>
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Notes ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  // ── NOTES ──
+  if (sec === 'notes') {
+    const no = fd.shift.notes;
+    const moods = [['😤','Rough'],['😐','Meh'],['🙂','Decent'],['😊','Good'],['🤩','Amazing']];
+    const tagOptions = ['Late customers','No-shows','Kitchen issues','Short staffed','Rushed','Fun crew','Good music','Ran out of items','Karaoke','Private event'];
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row"><h2 class="section-title">Notes</h2><span class="badge badge-blue">Optional</span></div>
+          <div class="section-sub">Anything else worth remembering about tonight</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div class="form-group">
+          <label class="form-label">How did you feel? <span class="optional">(Optional)</span></label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${moods.map(([em,lbl],i)=>`
+              <button onclick="updateNotes('mood',${i})" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;border-radius:var(--radius-lg);font-size:0.7rem;font-weight:600;cursor:pointer;border:1px solid ${no.mood===i?'rgba(139,92,246,.6)':'var(--border)'};background:${no.mood===i?'rgba(139,92,246,.12)':'rgba(10,15,26,.5)'};color:${no.mood===i?'var(--purple-400)':'var(--gray-500)'};transition:all 0.15s;">
+                <span style="font-size:1.4rem">${em}</span>${lbl}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags <span class="optional">(Optional)</span></label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${tagOptions.map(t=>`
+              <button onclick="toggleTag('${t}')" style="padding:5px 10px;border-radius:999px;font-size:0.72rem;font-weight:500;cursor:pointer;border:1px solid ${no.tags.includes(t)?'rgba(96,165,250,.6)':'var(--border)'};background:${no.tags.includes(t)?'rgba(96,165,250,.12)':'rgba(10,15,26,.5)'};color:${no.tags.includes(t)?'var(--blue-300)':'var(--gray-500)'};transition:all 0.15s;">${t}</button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Free Notes <span class="optional">(Optional)</span></label>
+          <textarea class="form-input" rows="4" placeholder="Anything worth remembering — regulars, complaints, good moments…" oninput="updateNotes('text',this.value)" style="resize:vertical;">${no.text||''}</textarea>
+          <div style="font-size:0.7rem;color:var(--gray-600);text-align:right;margin-top:2px;">${(no.text||'').length} chars</div>
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="handleSave()">Save Shift ${svg('check')}</button>
+      </div>
+    </div>`;
+  }
+
+  return `<div class="animate-in"><div class="card form-card" style="align-items:center;padding:40px;text-align:center;"><div style="color:var(--gray-500);font-size:0.85rem;">Section not found</div></div></div>`;
+}
+
+// ─────────────────────────────────────────────
+//  SMART TIME FIELD INTERACTIONS
+// ─────────────────────────────────────────────
+function activateTimeField(id) {
+  const disp = document.getElementById('disp-' + id);
+  const inp = document.getElementById('input-' + id);
+  if (!disp || !inp) return;
+  disp.classList.add('hidden');
+  inp.classList.add('active');
+  inp.focus();
+  inp.select();
+}
+
+function livePreviewTime(id, isEnd) {
+  const inp = document.getElementById('input-' + id);
+  const hint = document.getElementById('hint-' + id);
+  if (!inp || !hint) return;
+  const raw = inp.value;
+  if (!raw.trim()) {
+    hint.className = 'time-parse-hint dim';
+    hint.textContent = 'Type shorthand: 5 → 5:00 PM, 9 → 9:00 AM, 1730 → 5:30 PM';
+    return;
+  }
+
+  let preview;
+  if (isEnd) {
+    const startH24 = state.formData.shift.times.start
+      ? parseInt(state.formData.shift.times.start.split(':')[0])
+      : null;
+    preview = previewTimeInput(raw, startH24);
+  } else {
+    preview = previewTimeInput(raw, undefined);
+  }
+
+  if (preview.valid === true) {
+    hint.className = 'time-parse-hint ok';
+    hint.textContent = preview.display;
+  } else if (preview.valid === false) {
+    hint.className = 'time-parse-hint err';
+    hint.textContent = preview.display;
+  } else {
+    hint.className = 'time-parse-hint dim';
+    hint.textContent = '';
+  }
+}
+
+function commitTimeField(id, fieldType) {
+  const inp = document.getElementById('input-' + id);
+  if (!inp) return;
+  const raw = inp.value.trim();
+
+  let value24 = null;
+  if (raw) {
+    // Determine which field this is for context-aware parsing
+    if (fieldType === 'end') {
+      const startH24 = state.formData.shift.times.start
+        ? parseInt(state.formData.shift.times.start.split(':')[0])
+        : null;
+      const parsed = parseEndTimeWithContext(raw, startH24);
+      value24 = formatTime24(parsed);
+    } else {
+      const parsed = parseTimeInput(raw);
+      value24 = formatTime24(parsed);
+    }
+  }
+
+  // Route to correct state field
+  if (id === 'start') {
+    state.formData.shift.times.start = value24;
+  } else if (id === 'end') {
+    state.formData.shift.times.end = value24;
+  } else if (id === 'wage-start') {
+    // Independent wage override
+    const mainStart = state.formData.shift.times.start;
+    state.formData.shift.wage.startTime = (value24 === mainStart) ? null : value24;
+    if (!value24) state.formData.shift.wage.startTime = null;
+    else state.formData.shift.wage.startTime = value24;
+  } else if (id === 'wage-end') {
+    state.formData.shift.wage.endTime = value24;
+  } else if (id.startsWith('brk-start-')) {
+    const i = parseInt(id.replace('brk-start-', ''));
+    state.formData.shift.times.breaks[i].start = value24;
+  } else if (id.startsWith('brk-end-')) {
+    const i = parseInt(id.replace('brk-end-', ''));
+    state.formData.shift.times.breaks[i].end = value24;
+  } else if (id.startsWith('evt-')) {
+    const i = parseInt(id.replace('evt-', ''));
+    state.formData.shift.events.items[i].time = value24;
+  }
+
+  render();
+  // After render, if value was invalid/empty, show original raw in hint
+  const newHint = document.getElementById('hint-' + id);
+  if (newHint && raw && !value24) {
+    newHint.className = 'time-parse-hint err';
+    newHint.textContent = `"${raw}" wasn't recognized`;
+  }
+}
+
+function timeFieldKeydown(e, id, fieldType) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    commitTimeField(id, fieldType);
+  }
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    render(); // cancel — restore display
+  }
+}
+
+// ─────────────────────────────────────────────
+//  SMART DATE FIELD INTERACTIONS
+// ─────────────────────────────────────────────
+function activateDateField() {
+  const disp = document.getElementById('disp-date');
+  const inp = document.getElementById('input-date');
+  if (!disp || !inp) return;
+  disp.classList.add('hidden');
+  inp.classList.add('active');
+  inp.focus();
+  inp.select();
+}
+
+function livePreviewDate() {
+  const inp = document.getElementById('input-date');
+  const hint = document.getElementById('hint-date');
+  if (!inp || !hint) return;
+  const raw = inp.value;
+  if (!raw.trim()) {
+    hint.className = 'date-parse-hint dim';
+    hint.textContent = 'Type a date or use the picker →';
+    return;
+  }
+  const preview = previewDateInput(raw);
+  if (preview.valid === true) {
+    hint.className = 'date-parse-hint ok';
+    hint.textContent = preview.display;
+  } else if (preview.valid === false) {
+    hint.className = 'date-parse-hint err';
+    hint.textContent = preview.display;
+  }
+}
+
+function commitDateField() {
+  const inp = document.getElementById('input-date');
+  if (!inp) return;
+  const raw = inp.value.trim();
+  if (!raw) { render(); return; }
+  const d = parseDateInput(raw);
+  if (d) {
+    state.formData.shift.date = dateToISO(d);
+    state.seededDate = false;
+  }
+  render();
+}
+
+function dateFieldKeydown(e) {
+  if (e.key === 'Enter') { e.preventDefault(); commitDateField(); }
+  if (e.key === 'Escape') { e.preventDefault(); render(); }
+}
+
+function openDatePicker() {
+  const picker = document.getElementById('native-date-picker');
+  if (picker) picker.click();
+}
+
+function nativeDatePicked(val) {
+  if (val) {
+    state.formData.shift.date = val;
+    state.seededDate = false;
+    render();
+  }
+}
+
+// ─────────────────────────────────────────────
+//  EVENT HANDLERS
+// ─────────────────────────────────────────────
+function setSection(id) { state.activeSection = id; render(); }
+function nextSection() {
+  const i = sectionOrder.indexOf(state.activeSection);
+  if (i < sectionOrder.length - 1) setSection(sectionOrder[i+1]);
+}
+function prevSection() {
+  const i = sectionOrder.indexOf(state.activeSection);
+  if (i > 0) setSection(sectionOrder[i-1]);
+}
+
+function addBreak() { state.formData.shift.times.breaks.push({ start: null, end: null }); render(); }
+function removeBreak(i) { state.formData.shift.times.breaks.splice(i, 1); render(); }
+
+function updateTips(val) {
+  const v = val.trim() === '' ? null : parseFloat(val);
+  state.formData.shift.tips.amount = isNaN(v) ? null : v;
+  render();
+}
+function addPool() { state.formData.shift.tips.pools.push({ name:'', amount:0 }); render(); }
+function removePool(i) { state.formData.shift.tips.pools.splice(i, 1); render(); }
+function updatePool(i, field, val) { state.formData.shift.tips.pools[i][field] = val; render(); }
+
+function updateWageRate(val) {
+  state.formData.shift.wage.hourlyRate = val;
+  render();
+}
+
+function addTeamMember() { state.formData.shift.team.members.push({ name:'', role:'' }); render(); }
+function removeTeamMember(i) { state.formData.shift.team.members.splice(i, 1); render(); }
+function updateTeamMember(i, field, val) { state.formData.shift.team.members[i][field] = val; render(); }
+function updateTeam(field, val) { state.formData.shift.team[field] = val; if (!state.completedSections.includes('team')) state.completedSections.push('team'); render(); }
+
+function updateEvents(field, val) { state.formData.shift.events[field] = val; if (!state.completedSections.includes('events')) state.completedSections.push('events'); render(); }
+function addEvent() { state.formData.shift.events.items.push({ time: null, desc:'' }); render(); }
+function removeEvent(i) { state.formData.shift.events.items.splice(i, 1); render(); }
+function updateEvent(i, field, val) { state.formData.shift.events.items[i][field] = val; render(); }
+
+function updateChump(field, val) { state.formData.shift.chump[field] = val; render(); }
+function addNomination() { state.formData.shift.chump.nominations.push({ label:'', reason:'', severity:0 }); render(); }
+function removeNomination(i) { state.formData.shift.chump.nominations.splice(i, 1); render(); }
+function updateNomination(i, field, val) { state.formData.shift.chump.nominations[i][field] = val; render(); }
+
+function updateNotes(field, val) { state.formData.shift.notes[field] = val; if (!state.completedSections.includes('notes')) state.completedSections.push('notes'); render(); }
+function toggleTag(tag) {
+  const tags = state.formData.shift.notes.tags;
+  const idx = tags.indexOf(tag);
+  if (idx === -1) tags.push(tag); else tags.splice(idx, 1);
+  render();
+}
+
+function applyPattern() {
+  const startParsed = parseTimeInput('17');
+  const endParsed = parseEndTimeWithContext('1', parseInt(formatTime24(startParsed).split(':')[0]));
+  state.formData.shift.times.start = formatTime24(startParsed); // 17:00
+  state.formData.shift.times.end = '01:00';
+  render();
+}
+
+function handleSave() {
+  alert('Shift saved!\n\n' + JSON.stringify(state.formData, null, 2).substring(0, 400) + '...');
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); handleSave(); }
+});
+
+render();
+</script>
+</body>
+</html>
