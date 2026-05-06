@@ -7,10 +7,11 @@
 :root {
   --bg-primary: #0a0f1a;
   --bg-secondary: #131929;
-  --bg-card: rgba(20, 27, 45, 0.85);
-  --bg-card-hover: rgba(26, 35, 56, 0.9);
-  --border: rgba(75, 85, 99, 0.28);
-  --border-focus: rgba(139, 92, 246, 0.5);
+  --bg-card: rgba(23, 31, 52, 0.9);
+  --bg-card-hover: rgba(31, 42, 66, 0.92);
+  --border: rgba(107, 114, 128, 0.36);
+  --border-focus: rgba(168, 85, 247, 0.62);
+  --purple-300: #d8b4fe;
   --purple-400: #c084fc;
   --purple-500: #a855f7;
   --purple-600: #9333ea;
@@ -23,10 +24,11 @@
   --blue-400: #60a5fa;
   --red-400: #f87171;
   --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
   --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
+  --gray-400: #a7b0c0;
+  --gray-500: #8791a3;
   --gray-600: #4b5563;
   --gray-700: #374151;
   --gray-800: #1f2937;
@@ -46,15 +48,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.app { padding: 20px; min-height: 100vh; }
-.header { max-width: 1400px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: space-between; }
+.app { padding: 0 0 24px; min-height: 100vh; }
+.header { position: fixed; top: 0; left: 260px; right: 0; z-index: 30; margin: 0; background: rgba(10,15,26,.92); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); }
+.header-inner { max-width: none; margin: 0; padding: 14px 20px; display: grid; grid-template-columns: minmax(220px, 1fr) minmax(280px, 460px) auto; align-items: center; gap: 18px; }
 .header-title { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--purple-400), var(--pink-400)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .header-sub { color: var(--gray-500); font-size: 0.8rem; margin-top: 3px; }
 .header-btns { display: flex; gap: 8px; }
+.header-progress { min-width: 0; }
+.header-progress .prog-header { margin-bottom: 7px; }
+.header-progress .prog-track { margin-bottom: 0; }
 .icon-btn { width: 36px; height: 36px; border-radius: var(--radius-md); border: none; background: transparent; color: var(--gray-400); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background var(--transition); }
 .icon-btn:hover { background: rgba(75,85,99,0.4); }
 .icon-btn svg { width: 18px; height: 18px; }
-.layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr 300px; gap: 16px; }
+.layout { max-width: none; margin: 0 0 0 260px; padding: 94px 20px 0; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; }
+.layout-home { grid-template-columns: minmax(0, 1fr); }
+.layout-home .sidebar-r { display: none; }
 
 /* ─── CARDS ─── */
 .card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: var(--radius-xl); transition: border-color var(--transition); }
@@ -62,8 +70,13 @@ body {
 .card-pad { padding: 16px; }
 
 /* ─── LEFT SIDEBAR ─── */
-.sidebar-l { display: flex; flex-direction: column; gap: 12px; }
-.sticky { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 40px); overflow-y: auto; }
+.sidebar-l { position: fixed; left: 0; top: 0; bottom: 0; z-index: 35; width: 260px; padding: 12px; display: flex; flex-direction: column; background: rgba(10,15,26,.94); border-right: 1px solid var(--border); backdrop-filter: blur(16px); }
+.sticky { position: sticky; top: 94px; display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 176px); overflow-y: auto; }
+.sidebar-l .sticky { position: static; top: auto; flex: 1; min-height: 0; max-height: none; overflow: hidden; }
+.sidebar-l .card:first-child { flex: 1; min-height: 0; overflow-y: auto; }
+.rail-title-card { padding: 14px; border-radius: var(--radius-xl); border: 1px solid rgba(168,85,247,.22); background: linear-gradient(135deg, rgba(139,92,246,.16), rgba(236,72,153,.08)); }
+.rail-title { font-size: 1.2rem; font-weight: 850; color: var(--gray-50); line-height: 1.1; }
+.rail-subtitle { margin-top: 5px; color: var(--gray-400); font-size: .76rem; line-height: 1.35; }
 .prog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .prog-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-500); }
 .prog-pct { font-size: 0.7rem; font-weight: 700; color: var(--purple-400); }
@@ -78,11 +91,18 @@ body {
 .badge-amber { background: rgba(245,158,11,.15); color: var(--amber-400); }
 .badge-purple { background: rgba(139,92,246,.18); color: var(--purple-400); }
 .badge-emerald { background: rgba(16,185,129,.15); color: var(--emerald-400); }
+.status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
+.status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.status-muted { background: rgba(107,114,128,.14); color: var(--gray-500); }
+.status-live { background: rgba(16,185,129,.14); color: var(--emerald-400); }
+.status-warn { background: rgba(245,158,11,.14); color: var(--amber-400); }
+.status-required { background: rgba(239,68,68,.14); color: var(--red-400); }
 .nav-item { position: relative; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: transparent; border: none; border-radius: var(--radius-lg); cursor: pointer; width: 100%; text-align: left; color: inherit; transition: all var(--transition); }
 .nav-item::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:3px; background: transparent; border-radius: 0 3px 3px 0; transition: background var(--transition); }
-.nav-item:hover:not(.active) { background: rgba(75,85,99,.18); }
-.nav-item.active { background: rgba(139,92,246,.1); }
+.nav-item:hover:not(.active) { background: rgba(75,85,99,.2); }
+.nav-item.active { background: rgba(139,92,246,.14); box-shadow: 0 0 0 1px rgba(139,92,246,.18) inset; }
 .nav-item.active::before { background: linear-gradient(to bottom, var(--purple-500), var(--pink-500)); }
+.nav-item.kbd-focus { outline: 1px solid rgba(96,165,250,.55); background: rgba(96,165,250,.08); }
 .nav-icon { width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .nav-icon svg { width: 16px; height: 16px; }
 .bg-purple { background: rgba(139,92,246,.2); color: var(--purple-400); }
@@ -92,15 +112,19 @@ body {
 .bg-pink { background: rgba(236,72,153,.2); color: var(--pink-400); }
 .bg-yellow { background: rgba(250,204,21,.2); color: #facc15; }
 .nav-text { flex: 1; min-width: 0; }
-.nav-title { font-size: 0.82rem; font-weight: 600; color: var(--gray-50); }
-.nav-sub { font-size: 0.72rem; color: var(--gray-500); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-title { font-size: 0.82rem; font-weight: 600; color: var(--gray-200); }
+.nav-item.active .nav-title { color: var(--gray-50); }
+.nav-sub { font-size: 0.72rem; color: var(--gray-400); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-sub.emerald { color: var(--emerald-400); }
-.check { width: 16px; height: 16px; color: var(--emerald-400); flex-shrink: 0; }
+.nav-shortcut { min-width: 21px; height: 20px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(107,114,128,.44); background: rgba(10,15,26,.36); color: var(--gray-300); font-size: .62rem; font-weight: 800; line-height: 1; }
+.nav-item.active .nav-shortcut, .nav-item:hover .nav-shortcut { color: var(--blue-300); border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.08); }
+.check { width: 16px; height: 16px; color: var(--emerald-400); flex-shrink: 0; opacity: 1 !important; }
 .check svg { width: 16px; height: 16px; }
-.nav-item-sm { opacity: 0.55; padding: 7px 12px; }
+.nav-item-sm { opacity: 1; padding: 7px 12px; }
 .nav-item-sm:hover, .nav-item-sm.active { opacity: 1; }
 .nav-icon-sm { width: 28px; height: 28px; }
-.sidebar-actions { padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 7px; }
+.sidebar-actions { display: flex; flex-direction: column; gap: 7px; padding-top: 10px; border-top: 1px solid var(--border); }
+.sidebar-actions .btn { width: 100%; padding: 7px 10px; min-height: 32px; font-size: .74rem; border-radius: var(--radius-md); }
 
 /* ─── BUTTONS ─── */
 .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 16px; border: none; border-radius: var(--radius-lg); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all var(--transition); overflow: hidden; }
@@ -122,16 +146,104 @@ body {
 
 /* ─── MAIN ─── */
 .main { display: flex; flex-direction: column; gap: 14px; }
+.section-tools { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: -4px; }
+.tool-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border: 1px solid var(--border); border-radius: var(--radius-md); background: rgba(10,15,26,.28); color: var(--gray-300); font-size: .72rem; font-weight: 800; cursor: pointer; transition: all var(--transition); }
+.tool-chip:hover { border-color: rgba(96,165,250,.42); background: rgba(96,165,250,.08); color: var(--blue-300); }
+.tool-chip kbd { padding: 1px 5px; border-radius: 5px; background: rgba(31,41,55,.82); color: var(--gray-300); font-size: .62rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .section-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2px; }
 .section-title { font-size: 1.4rem; font-weight: 700; color: var(--gray-50); }
 .section-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-.section-sub { font-size: 0.78rem; color: var(--gray-500); }
 .form-card { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+.form-card > div { transition: opacity var(--transition), filter var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition); }
+.form-card > div:not(.field-section):has(input, textarea, select, button) {
+  padding: 16px;
+  border: 1px solid rgba(107,114,128,.28);
+  border-radius: var(--radius-lg);
+  background: rgba(10,15,26,.18);
+}
+.form-card > div:not(.field-section):has(input, textarea, select, button):focus-within {
+  border-color: rgba(96,165,250,.62);
+  background: rgba(96,165,250,.13);
+  box-shadow: 0 0 0 1px rgba(96,165,250,.16) inset, 0 10px 28px rgba(0,0,0,.12);
+}
+.form-card > div.group-focused:not(.field-section):has(input, textarea, select, button) {
+  border-color: rgba(96,165,250,.62);
+  background: rgba(96,165,250,.13);
+  box-shadow: 0 0 0 1px rgba(96,165,250,.16) inset, 0 10px 28px rgba(0,0,0,.12);
+}
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar),
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) {
+  opacity: .78;
+  filter: saturate(.72);
+}
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .form-input,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .smart-time-display,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .smart-date-display,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .seg-control,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .select-chip,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .form-input,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .smart-time-display,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .smart-date-display,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .seg-control,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .select-chip {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .form-input,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .smart-time-display,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .smart-date-display,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .form-input,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .smart-time-display,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .smart-date-display {
+  padding-left: 0;
+  padding-right: 0;
+}
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .field-section-sub,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .time-parse-hint,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .date-parse-hint,
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) .dash-note,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .field-section-sub,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .time-parse-hint,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .date-parse-hint,
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) .dash-note {
+  display: none;
+}
+.form-card:focus-within > div:not(:focus-within):not(.duration-bar) button:not(.date-picker-btn):not(.btn-link),
+.form-card:has(.group-focused) > div:not(.group-focused):not(.duration-bar) button:not(.date-picker-btn):not(.btn-link) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
+.field-section { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: rgba(10,15,26,.24); transition: opacity var(--transition), filter var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition); }
+.field-section:focus-within { border-color: rgba(96,165,250,.62); background: rgba(96,165,250,.13); box-shadow: 0 0 0 1px rgba(96,165,250,.16) inset, 0 10px 28px rgba(0,0,0,.12); }
+.field-section.group-focused { border-color: rgba(96,165,250,.62); background: rgba(96,165,250,.13); box-shadow: 0 0 0 1px rgba(96,165,250,.16) inset, 0 10px 28px rgba(0,0,0,.12); }
+.form-card:focus-within .field-section:not(:focus-within) { opacity: .78; filter: saturate(.72); }
+.field-section.muted { opacity: .46; filter: saturate(.75); }
+.field-section.muted * { pointer-events: none; }
+.field-section-hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.field-section-title { font-size: .86rem; font-weight: 800; color: var(--gray-100); }
+.field-section-sub { margin-top: 3px; color: var(--gray-500); font-size: .73rem; line-height: 1.4; }
+.seg-control { display: inline-grid; grid-auto-flow: column; gap: 6px; padding: 4px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: rgba(10,15,26,.35); }
+.seg-btn { border: 0; border-radius: var(--radius-md); padding: 8px 12px; min-width: 74px; background: transparent; color: var(--gray-400); font-size: .78rem; font-weight: 800; cursor: pointer; transition: all var(--transition); }
+.seg-btn.active { background: rgba(139,92,246,.22); color: var(--gray-50); box-shadow: 0 0 0 1px rgba(168,85,247,.22) inset; }
+.seg-btn.win.active { background: rgba(16,185,129,.18); color: var(--emerald-400); }
+.seg-btn.loss.active { background: rgba(239,68,68,.15); color: var(--red-400); }
+.big-toggle { width: 100%; min-height: 86px; padding: 16px; border: 1px solid rgba(107,114,128,.42); border-radius: var(--radius-lg); background: rgba(10,15,26,.32); color: inherit; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; text-align: left; transition: all var(--transition); }
+.big-toggle.active { border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.08); }
+.big-toggle-title { font-size: 1rem; font-weight: 850; color: var(--gray-50); }
+.big-toggle-sub { margin-top: 4px; font-size: .78rem; color: var(--gray-400); line-height: 1.35; }
+.toggle-knob { width: 52px; height: 30px; padding: 3px; border-radius: 999px; background: rgba(75,85,99,.55); flex: 0 0 auto; transition: background var(--transition); }
+.toggle-knob::before { content:''; display: block; width: 24px; height: 24px; border-radius: 50%; background: var(--gray-300); transition: transform var(--transition), background var(--transition); }
+.big-toggle.active .toggle-knob { background: rgba(16,185,129,.4); }
+.big-toggle.active .toggle-knob::before { transform: translateX(22px); background: white; }
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.select-chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border); border-radius: 999px; background: rgba(10,15,26,.35); color: var(--gray-300); padding: 7px 10px; font-size: .76rem; font-weight: 800; cursor: pointer; transition: all var(--transition); }
+.select-chip.active { border-color: rgba(96,165,250,.46); background: rgba(96,165,250,.12); color: var(--blue-300); }
 .form-label { font-size: 0.78rem; font-weight: 600; color: var(--gray-300); display: flex; align-items: center; gap: 4px; }
 .required { color: var(--purple-400); }
-.optional { color: var(--gray-600); font-weight: 400; font-size: 0.72rem; }
 .form-label-sm { font-size: 0.72rem; font-weight: 600; color: var(--gray-400); }
 .input-wrap { position: relative; }
 
@@ -217,7 +329,7 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 .time-parse-hint {
   font-size: 0.7rem;
   margin-top: 3px;
-  min-height: 16px;
+  min-height: 0;
   transition: color 0.15s;
 }
 .time-parse-hint.ok { color: var(--emerald-400); }
@@ -261,7 +373,7 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 }
 .smart-date-input.active { display: block; }
 .smart-date-display.hidden { display: none; }
-.date-parse-hint { font-size: 0.7rem; margin-top: 3px; min-height: 16px; transition: color 0.15s; }
+.date-parse-hint { font-size: 0.7rem; margin-top: 3px; min-height: 0; transition: color 0.15s; }
 .date-parse-hint.ok { color: var(--emerald-400); }
 .date-parse-hint.err { color: var(--red-400); }
 .date-parse-hint.dim { color: var(--gray-600); }
@@ -291,6 +403,41 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 .breaks-header { display: flex; align-items: center; justify-content: space-between; }
 .break-card { padding: 12px 14px; }
 .break-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; }
+.team-table { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: visible; background: rgba(10,15,26,.25); max-width: 900px; }
+.team-row { display: grid; grid-template-columns: 44px minmax(170px, 1.35fr) minmax(105px, .72fr) minmax(105px, .72fr) minmax(86px, .4fr) minmax(76px, .36fr) 44px; gap: 0; align-items: stretch; border-top: 1px solid var(--border); position: relative; }
+.team-row:first-child { border-top: 0; }
+.team-head { background: rgba(31,41,55,.45); color: var(--gray-500); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.team-cell { padding: 8px; min-width: 0; display: flex; align-items: center; }
+.team-cell .form-group { width: 100%; gap: 0; }
+.team-cell .form-label { display: none; }
+.team-cell .time-parse-hint { display: none; }
+.team-table .form-input, .team-table .smart-time-display, .team-table .smart-time-input { min-height: 34px; padding-top: 7px; padding-bottom: 7px; }
+.team-row-user { background: rgba(96,165,250,.035); }
+.team-user-badge { display: inline-flex; align-items: center; justify-content: center; margin-left: 8px; width: 22px; height: 22px; border-radius: 999px; background: rgba(245,158,11,.16); color: var(--amber-400); vertical-align: middle; box-shadow: 0 0 0 1px rgba(245,158,11,.24) inset; }
+.team-user-badge svg { width: 13px; height: 13px; }
+.team-name-wrap { position: relative; width: 100%; }
+.team-name-wrap .form-input { padding-right: 40px; }
+.team-name-wrap .team-user-badge { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.team-name-wrap .team-user-badge + .team-suggest-menu { top: calc(100% + 4px); }
+.person-chip { width: 26px; min-width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .62rem; font-weight: 800; letter-spacing: .02em; color: white; pointer-events: none; flex: 0 0 26px; }
+.person-chip-inline { position: static; transform: none; flex: 0 0 auto; }
+.person-chip-0 { background: #2563eb; }
+.person-chip-1 { background: #059669; }
+.person-chip-2 { background: #d97706; }
+.person-chip-3 { background: #db2777; }
+.person-chip-4 { background: #7c3aed; }
+.person-chip-5 { background: #0891b2; }
+.team-suggest-menu { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 80; background: rgba(17,24,39,.98); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: 0 12px 30px rgba(0,0,0,.28); overflow: hidden; }
+.team-suggest-item { width: 100%; border: 0; background: transparent; color: var(--gray-300); text-align: left; padding: 8px 10px; font-size: .8rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.team-suggest-item.active, .team-suggest-item:hover { background: rgba(96,165,250,.14); color: var(--blue-300); }
+.location-main { color: var(--blue-300); background: rgba(96,165,250,.12); }
+.location-deck { color: var(--emerald-400); background: rgba(16,185,129,.12); }
+.location-upper { color: var(--amber-400); background: rgba(245,158,11,.12); }
+.location-input { text-transform: uppercase; font-weight: 700; text-align: center; }
+.location-display { width: 100%; justify-content: center; border: 0; cursor: text; }
+.location-display::before { display: none; }
+.team-hours { width: 100%; text-align: center; color: var(--gray-500); font-size: .74rem; font-weight: 700; }
+.team-hours.active { color: var(--emerald-400); }
 
 /* Tip pools */
 .pools-header { display: flex; align-items: center; justify-content: space-between; }
@@ -311,7 +458,67 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 .suggest-row h4 { font-size: 0.82rem; font-weight: 600; color: var(--gray-100); }
 .suggest-p { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 10px; }
 .suggest-btns { display: flex; gap: 8px; }
-.form-nav { display: flex; gap: 8px; align-items: center; padding-top: 4px; }
+.form-nav { display: none; }
+.home-card { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.home-top { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr); gap: 14px; align-items: stretch; }
+.home-hero { padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(96,165,250,.1), rgba(16,185,129,.06)); display: flex; flex-direction: column; justify-content: space-between; min-height: 178px; }
+.home-eyebrow { font-size: .7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: .07em; font-weight: 800; margin-bottom: 8px; }
+.home-title { font-size: 1.6rem; color: var(--gray-50); font-weight: 850; line-height: 1.15; }
+.home-subtitle { color: var(--gray-400); font-size: .86rem; line-height: 1.45; max-width: 680px; margin-top: 8px; }
+.home-detail-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.detail-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 999px; border: 1px solid rgba(107,114,128,.32); background: rgba(10,15,26,.3); color: var(--gray-300); font-size: .74rem; font-weight: 700; }
+.detail-chip svg { width: 13px; height: 13px; color: var(--blue-300); }
+.earnings-card { padding: 18px; border: 1px solid rgba(16,185,129,.22); border-radius: var(--radius-lg); background: rgba(16,185,129,.06); display: flex; flex-direction: column; justify-content: space-between; }
+.earnings-total { font-size: 2rem; font-weight: 900; color: var(--gray-50); margin-top: 4px; }
+.earnings-breakdown { display: grid; gap: 8px; margin-top: 14px; }
+.earnings-line { display: flex; justify-content: space-between; gap: 14px; font-size: .78rem; color: var(--gray-400); }
+.earnings-line strong { color: var(--gray-100); }
+.dash-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+.dash-panel { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: rgba(10,15,26,.28); min-height: 104px; }
+.dash-label { font-size: .68rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; font-weight: 700; }
+.dash-value { font-size: 1.15rem; color: var(--gray-50); font-weight: 800; }
+.dash-note { font-size: .72rem; color: var(--gray-500); margin-top: 5px; line-height: 1.35; }
+.dashboard-band { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr); gap: 12px; }
+.dash-list { display: flex; flex-direction: column; gap: 8px; }
+.dash-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--gray-300); font-size: .82rem; }
+.dash-person { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.dash-person-name { color: var(--gray-100); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.loc-pill { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 999px; font-size: .63rem; font-weight: 800; line-height: 1.45; }
+.loc-pill.empty { color: var(--gray-600); background: rgba(107,114,128,.12); }
+.mini-bars { display: flex; align-items: end; gap: 7px; height: 76px; margin-top: 14px; }
+.mini-bar { flex: 1; min-width: 16px; border-radius: 6px 6px 2px 2px; background: linear-gradient(to top, rgba(168,85,247,.8), rgba(96,165,250,.85)); }
+.compare-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: rgba(10,15,26,.28); }
+.compare-main { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.compare-value { font-size: 1.55rem; font-weight: 900; color: var(--gray-50); }
+.compare-delta { font-size: .8rem; font-weight: 800; }
+.compare-delta.up { color: var(--emerald-400); }
+.compare-delta.down { color: var(--red-400); }
+.team-total-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; color: var(--gray-300); font-size: .82rem; font-weight: 800; }
+
+@media (max-width: 1180px) {
+  .sidebar-l { width: 230px; }
+  .header { left: 230px; }
+  .layout { margin-left: 230px; grid-template-columns: minmax(0, 1fr); }
+  .layout-home { grid-template-columns: minmax(0, 1fr); }
+  .sidebar-r { display: none !important; }
+  .home-top, .dashboard-band { grid-template-columns: 1fr; }
+  .dash-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media (max-width: 820px) {
+  .app { padding-left: 0; padding-right: 0; }
+  .header { position: sticky; left: 0; right: auto; margin-left: 0; margin-right: 0; }
+  .header-inner { grid-template-columns: 1fr; gap: 10px; }
+  .sidebar-l { position: static; width: auto; margin: 0 12px 12px; border: 1px solid var(--border); border-radius: var(--radius-xl); }
+  .layout, .layout-home { margin-left: 0; padding: 0 12px; grid-template-columns: 1fr; }
+  .sticky, .sidebar-l .sticky { position: static; max-height: none; overflow: visible; }
+  .sidebar-l .card:first-child { overflow: visible; }
+  .dash-grid { grid-template-columns: 1fr; }
+  .home-card { padding: 14px; }
+  .home-title { font-size: 1.3rem; }
+  .team-table { overflow-x: auto; max-width: 100%; }
+  .team-row { min-width: 780px; }
+}
 
 /* ─── RIGHT SIDEBAR ─── */
 .sidebar-r { display: flex; flex-direction: column; gap: 12px; }
@@ -359,6 +566,7 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 
 @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .animate-in { animation: slideIn 0.3s ease-out; }
+.no-animate .animate-in { animation: none; }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--gray-700); border-radius: 3px; }
@@ -372,18 +580,22 @@ textarea.form-input { font-family: inherit; line-height: 1.5; }
 //  STATE
 // ─────────────────────────────────────────────
 const state = {
-  activeSection: 'date',
+  activeSection: 'home',
+  navFocused: false,
+  navFocusIndex: 0,
+  focusedGroupIndex: 0,
   completedSections: [],
   seededDate: true,
   formData: {
     shift: {
-      date: '2024-11-01',
+      date: dateToISO(new Date()),
       times: { start: null, end: null, breaks: [] },
       tips: { amount: null, pools: [] },
       wage: { startTime: null, endTime: null, hourlyRate: 6 },
-      team: { members: [], role: '', section: '' },
+      other: { entries: [] },
+      team: { members: [], role: '', section: '', initialized: false },
       events: { items: [], shiftRating: null, busyLevel: null },
-      chump: { nominations: [], winner: '', notes: '' },
+      chump: { played: null, didWin: null, amount: null, useDetailedAmount: false, coins: null, cash: null, playerCount: null, players: [], winnerName: '', notes: '' },
       notes: { text: '', mood: null, tags: [] }
     }
   }
@@ -492,6 +704,14 @@ function formatTimeDisplay(time24) {
   return h12 + (m > 0 ? ':' + String(m).padStart(2,'0') : '') + ' ' + meridiem;
 }
 
+function formatTimeEditValue(time24) {
+  if (!time24) return '';
+  const [h, m] = time24.split(':').map(Number);
+  const meridiem = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return h12 + ':' + String(m).padStart(2,'0') + meridiem;
+}
+
 function previewTimeInput(raw, contextStartH24) {
   if (!raw || !raw.trim()) return { display: '', valid: null };
   const parsed = contextStartH24 !== undefined
@@ -499,6 +719,25 @@ function previewTimeInput(raw, contextStartH24) {
     : parseTimeInput(raw);
   if (!parsed) return { display: 'Not recognized', valid: false };
   return { display: '→ ' + formatTimeDisplay(formatTime24(parsed)), valid: true };
+}
+
+function getTimeContextStart(id) {
+  if (id === 'end') return state.formData.shift.times.start;
+  if (id === 'wage-end') return state.formData.shift.wage.startTime || state.formData.shift.times.start;
+  if (id.startsWith('brk-end-')) {
+    const i = parseInt(id.replace('brk-end-', ''), 10);
+    return state.formData.shift.times.breaks[i]?.start || null;
+  }
+  if (id.startsWith('team-end-')) {
+    const i = parseInt(id.replace('team-end-', ''), 10);
+    return state.formData.shift.team.members[i]?.startTime || state.formData.shift.times.start;
+  }
+  return null;
+}
+
+function getTimeContextStartHour(id) {
+  const start = getTimeContextStart(id);
+  return start ? parseInt(start.split(':')[0], 10) : null;
 }
 
 // ─────────────────────────────────────────────
@@ -589,6 +828,13 @@ function calcDurationDisplay(start, end) {
   return d.toFixed(1);
 }
 
+function otherTotal(type = null) {
+  return state.formData.shift.other.entries.reduce((sum, entry) => {
+    if (type && entry.type !== type) return sum;
+    return sum + (Number(entry.amount) || 0);
+  }, 0);
+}
+
 function calcTotal() {
   const tips = state.formData.shift.tips.amount || 0;
   const w = state.formData.shift.wage;
@@ -596,7 +842,7 @@ function calcTotal() {
   const end = w.endTime || state.formData.shift.times.end;
   const dur = calcDuration(start, end) || 0;
   const wageEarnings = (w.hourlyRate || 0) * dur;
-  return tips + wageEarnings;
+  return tips + wageEarnings + otherTotal();
 }
 
 function calcProgress() {
@@ -611,6 +857,7 @@ function poolTotal() {
 
 const busyLabels = ['Dead','Slow','Moderate','Busy','Slammed'];
 const ratingLabels = ['Rough','Below Avg','Average','Good','Great'];
+const otherEarningTypes = ['Cash', 'Digital', 'Overtime', 'Miscellaneous'];
 
 // ─────────────────────────────────────────────
 //  SVG HELPERS
@@ -632,6 +879,7 @@ const svgs = {
   settings: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>`,
   bolt: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>`,
   pencil: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>`,
+  crown: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 16l-2-9 5 4 4-7 4 7 5-4-2 9H5zm0 0v3h14v-3"/>`,
 };
 
 function svg(key, size=16) {
@@ -646,19 +894,106 @@ const sections = [
   { id:'times', name:'Times', icon:'clock',    required:false, color:'purple' },
   { id:'tips',  name:'Tips',  icon:'dollar',   required:false, color:'amber'  },
   { id:'wage',  name:'Wage',  icon:'money',    required:false, color:'emerald'},
+  { id:'other', name:'Other', icon:'dollar',   required:false, color:'blue'   },
+  { id:'chump', name:'Chump', icon:'star',     required:false, color:'pink'   },
   { id:'team',  name:'Team',  icon:'users',    required:false, color:'blue'   },
   { id:'events',name:'Events',icon:'calendar', required:false, color:'purple' },
-  { id:'chump', name:'Chump', icon:'star',     required:false, color:'pink'   },
   { id:'notes', name:'Notes', icon:'edit',     required:false, color:'yellow' },
 ];
 const sectionOrder = sections.map(s=>s.id);
+const navOrder = ['home', ...sectionOrder];
+const sectionShortcuts = {
+  h: 'home',
+  d: 'date',
+  t: 'times',
+  i: 'tips',
+  w: 'wage',
+  o: 'other',
+  c: 'chump',
+  b: 'team',
+  e: 'events',
+  n: 'notes'
+};
+const navGroups = [
+  { label: 'Shift Details', color: 'blue', ids: ['date', 'times'] },
+  { label: 'Earnings', color: 'amber', ids: ['tips', 'wage', 'other', 'chump'] },
+  { label: 'Service Log', color: 'purple', ids: ['team', 'events', 'notes'] },
+];
+const currentUserName = 'You';
+const employeeNames = ['Ari Chen','Bea Martin','Cam Rivera','Drew Patel','Eli Brooks','Gia Santos','Jules Kim','Kai Morgan','Maya Lewis','Noah Reed','Rae Collins','Tess Walker'];
+const teamLocations = ['Main', 'Deck', 'Upper'];
+
+function teamNameMatches(raw) {
+  const q = (raw || '').trim().toLowerCase();
+  if (!q) return [];
+  return employeeNames.filter(name => name.toLowerCase().startsWith(q)).slice(0, 5);
+}
+
+function locationFromInput(raw) {
+  const key = (raw || '').trim().toLowerCase()[0];
+  if (key === 'm') return 'Main';
+  if (key === 'd') return 'Deck';
+  if (key === 'u') return 'Upper';
+  return null;
+}
+
+function personInitials(name) {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '+';
+  return parts.slice(0, 2).map(part => part[0]).join('').toUpperCase();
+}
+
+function personChipClass(name, fallbackIndex = 0) {
+  const source = name || String(fallbackIndex);
+  const sum = [...source].reduce((total, char) => total + char.charCodeAt(0), 0);
+  return `person-chip-${sum % 6}`;
+}
+
+function personChip(name, fallbackIndex = 0, inline = false) {
+  return `<span class="person-chip ${inline ? 'person-chip-inline' : ''} ${personChipClass(name, fallbackIndex)}">${personInitials(name)}</span>`;
+}
+
+function locationDisplay(location) {
+  if (!location) return `<span class="status-pill status-muted location-display">—</span>`;
+  return `<span class="status-pill location-display location-${location.toLowerCase()}">${location}</span>`;
+}
+
+function locationPill(location) {
+  if (!location) return `<span class="loc-pill empty">No station</span>`;
+  return `<span class="loc-pill location-${location.toLowerCase()}">${location}</span>`;
+}
+
+function statusPill(label, tone = 'muted') {
+  return `<span class="status-pill status-${tone}">${label}</span>`;
+}
+
+function sectionStatus(id) {
+  const shift = state.formData.shift;
+  if (id === 'date') return shift.date ? statusPill('Set', 'live') : statusPill('Required', 'required');
+  if (id === 'times') return shift.times.start || shift.times.end ? statusPill('Logged', 'live') : statusPill('Not logged');
+  if (id === 'tips') return shift.tips.amount !== null ? statusPill('Logged', 'live') : statusPill('Not logged');
+  if (id === 'wage') {
+    const start = shift.wage.startTime || shift.times.start;
+    const end = shift.wage.endTime || shift.times.end;
+    return calcDuration(start, end) && shift.wage.hourlyRate ? statusPill('Active', 'live') : statusPill('Not logged');
+  }
+  if (id === 'other') return shift.other.entries.length ? statusPill('Logged', 'live') : statusPill('Not logged');
+  if (id === 'team') return shift.team.members.length ? statusPill('Logged', 'live') : statusPill('Not logged');
+  if (id === 'events') return shift.events.items.length || shift.events.shiftRating || shift.events.busyLevel ? statusPill('Logged', 'live') : statusPill('Not logged');
+  if (id === 'chump') {
+    if (shift.chump.played === false) return statusPill('Skipped', 'muted');
+    return shift.chump.played ? statusPill('Logged', 'live') : statusPill('Not logged');
+  }
+  if (id === 'notes') return shift.notes.text || shift.notes.mood !== null || shift.notes.tags.length ? statusPill('Logged', 'live') : statusPill('Not logged');
+  return statusPill('Not logged');
+}
 
 // ─────────────────────────────────────────────
 //  SMART TIME FIELD COMPONENT
 // ─────────────────────────────────────────────
 function renderSmartTimeField({ id, label, value, required, isEnd, startValue }) {
   const displayVal = value ? formatTimeDisplay(value) : null;
-  const req = required ? `<span class="required">*</span>` : `<span class="optional">(Optional)</span>`;
+  const req = required ? `<span class="required">*</span>` : '';
   return `
     <div class="form-group">
       <label class="form-label">${label} ${req}</label>
@@ -668,21 +1003,21 @@ function renderSmartTimeField({ id, label, value, required, isEnd, startValue })
             ? `<span class="time-val">${displayVal}</span>`
             : `<span class="time-empty">—</span>`
           }
-          <span class="time-edit-hint">${svg('pencil', 12)}</span>
         </div>
         <input
           class="smart-time-input"
           id="input-${id}"
           type="text"
           inputmode="numeric"
-          placeholder="e.g. 5, 530, 17, 9a…"
+          value="${formatTimeEditValue(value)}"
+          placeholder=""
           autocomplete="off"
           onblur="commitTimeField('${id}', '${isEnd ? 'end' : 'start'}')"
           oninput="livePreviewTime('${id}', ${isEnd ? 'true' : 'false'})"
           onkeydown="timeFieldKeydown(event, '${id}', '${isEnd ? 'end' : 'start'}')"
         >
       </div>
-      <div class="time-parse-hint dim" id="hint-${id}">Type shorthand: 5 → 5:00 PM, 9 → 9:00 AM, 1730 → 5:30 PM</div>
+      <div class="time-parse-hint dim" id="hint-${id}"></div>
     </div>`;
 }
 
@@ -718,22 +1053,23 @@ function renderSmartDateField() {
           class="smart-date-input"
           id="input-date"
           type="text"
-          placeholder="Nov 1, today, 1101, 11/1…"
+          placeholder=""
           autocomplete="off"
           onblur="commitDateField()"
           oninput="livePreviewDate()"
           onkeydown="dateFieldKeydown(event)"
         >
       </div>
-      <div class="date-parse-hint dim" id="hint-date">Type a date or use the picker →</div>
+      <div class="date-parse-hint dim" id="hint-date"></div>
     </div>`;
 }
 
 // ─────────────────────────────────────────────
 //  RENDER
 // ─────────────────────────────────────────────
-function render() {
+function render(options = {}) {
   const fd = state.formData;
+  if (state.activeSection === 'team') ensureTeamInitialized();
   const startT = fd.shift.times.start;
   const endT = fd.shift.times.end;
   const dur = calcDurationDisplay(startT, endT);
@@ -765,6 +1101,15 @@ function render() {
         ? `<div class="nav-sub emerald">$${(fd.shift.wage.hourlyRate * d).toFixed(2)}</div>`
         : `<div class="nav-sub">Not set</div>`;
     }
+    if (id === 'other') {
+      const total = otherTotal();
+      return total ? `<div class="nav-sub emerald">${money(total)}</div>` : `<div class="nav-sub">Not logged</div>`;
+    }
+    if (id === 'chump') {
+      if (fd.shift.chump.played === false) return `<div class="nav-sub">Not played</div>`;
+      if (fd.shift.chump.played) return `<div class="nav-sub emerald">${fd.shift.chump.didWin === true ? 'Won' : fd.shift.chump.didWin === false ? 'Lost' : 'Played'}</div>`;
+      return `<div class="nav-sub">Not logged</div>`;
+    }
     return '';
   }
 
@@ -773,6 +1118,8 @@ function render() {
     if (id === 'times') return !!(fd.shift.times.start || fd.shift.times.end);
     if (id === 'tips') return fd.shift.tips.amount !== null;
     if (id === 'wage') return !!(fd.shift.wage.hourlyRate);
+    if (id === 'other') return fd.shift.other.entries.length > 0;
+    if (id === 'chump') return fd.shift.chump.played !== null;
     return state.completedSections.includes(id);
   }
 
@@ -782,78 +1129,96 @@ function render() {
   const wageEarnings = wageDur !== null && fd.shift.wage.hourlyRate
     ? (fd.shift.wage.hourlyRate * wageDur).toFixed(2)
     : null;
+  const currentIndex = sectionOrder.indexOf(state.activeSection);
+  const prevId = currentIndex > 0 ? sectionOrder[currentIndex - 1] : null;
+  const nextId = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
+  const nextLabel = nextId ? sections.find(s => s.id === nextId).name : null;
+  const isHome = state.activeSection === 'home';
 
   document.getElementById('root').innerHTML = `
-  <div class="app">
+  <div class="app ${options.suppressAnimation ? 'no-animate' : ''}">
     <div class="header">
-      <div>
-        <div class="header-title">Shift Entry</div>
-        <div class="header-sub">${fd.shift.date ? (() => { const f = formatDateDisplay(fd.shift.date); return f.day + ', ' + f.full; })() : 'New Shift'}</div>
-      </div>
-      <div class="header-btns">
-        <button class="icon-btn" title="Settings">${svg('settings',18)}</button>
-        <button class="icon-btn" title="Help">${svg('info',18)}</button>
+      <div class="header-inner">
+        <div>
+          <div class="header-title">Current Shift</div>
+          <div class="header-sub">${fd.shift.date ? (() => { const f = formatDateDisplay(fd.shift.date); return f.day + ', ' + f.full; })() : 'New Shift'}</div>
+        </div>
+        <div class="header-progress">
+          <div class="prog-header">
+            <span class="prog-label">Progress</span>
+            <span class="prog-pct">${pct}%</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="header-btns">
+          <button class="icon-btn" title="Settings">${svg('settings',18)}</button>
+          <button class="icon-btn" title="Help">${svg('info',18)}</button>
+        </div>
       </div>
     </div>
 
-    <div class="layout">
+    <div class="layout ${isHome ? 'layout-home' : ''}">
       <aside class="sidebar-l">
         <div class="sticky">
-          <div class="card card-pad">
-            <div class="prog-header">
-              <span class="prog-label">Progress</span>
-              <span class="prog-pct">${pct}%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
-            <div class="prog-stats">
-              <span>Date ${fd.shift.date ? '✓' : '—'}</span>
-              <span>${['times','tips','wage','team','events','chump','notes'].filter(id => isCompleted(id)).length} sections filled</span>
-            </div>
+          <div class="rail-title-card">
+            <div class="rail-title">Shift Editor</div>
+            <div class="rail-subtitle">${fd.shift.date ? (() => { const f = formatDateDisplay(fd.shift.date); return f.day + ', ' + f.full; })() : 'Build the shift log'}</div>
           </div>
-
           <div class="card card-pad" style="display:flex;flex-direction:column;gap:12px;">
             <div class="nav-group">
-              <div class="group-label"><span class="badge badge-red">Required</span></div>
-              ${sections.filter(s=>s.required).map(s => `
-                <button class="nav-item ${state.activeSection===s.id?'active':''}" onclick="setSection('${s.id}')">
-                  <div class="nav-icon bg-${s.color}">${svg(s.icon,16)}</div>
-                  <div class="nav-text">
-                    <div class="nav-title">${s.name}</div>
-                    ${navSub(s.id)}
-                  </div>
-                  ${isCompleted(s.id) ? `<span class="check">${svg('check',15)}</span>` : ''}
-                </button>
-              `).join('')}
+              <div class="group-label"><span class="badge badge-emerald">Overview</span></div>
+              <button id="nav-home" class="nav-item nav-item-sm ${state.activeSection==='home'?'active':''} ${state.navFocused && state.navFocusIndex===0?'kbd-focus':''}" onclick="setSection('home')">
+                <div class="nav-icon nav-icon-sm bg-emerald">${svg('trend',13)}</div>
+                <div class="nav-text">
+                  <div class="nav-title">Home</div>
+                  <div class="nav-sub">Dashboard</div>
+                </div>
+                <kbd class="nav-shortcut">H</kbd>
+              </button>
             </div>
-            <div class="nav-group">
-              <div class="group-label"><span class="badge badge-blue">Optional</span></div>
-              ${sections.filter(s=>!s.required).map(s => `
-                <button class="nav-item nav-item-sm ${state.activeSection===s.id?'active':''}" onclick="setSection('${s.id}')">
+            ${navGroups.map(group => `
+              <div class="nav-group">
+                <div class="group-label"><span class="badge badge-${group.color}">${group.label}</span></div>
+                ${group.ids.map(id => {
+                  const s = sections.find(section => section.id === id);
+                  const navIndex = navOrder.indexOf(s.id);
+                  return `
+                <button id="nav-${s.id}" class="nav-item nav-item-sm ${state.activeSection===s.id?'active':''} ${state.navFocused && state.navFocusIndex===navIndex?'kbd-focus':''}" onclick="setSection('${s.id}')">
                   <div class="nav-icon nav-icon-sm bg-${s.color}">${svg(s.icon,13)}</div>
                   <div class="nav-text">
                     <div class="nav-title">${s.name}</div>
                     ${navSub(s.id)}
                   </div>
                   ${isCompleted(s.id) ? `<span class="check">${svg('check',13)}</span>` : ''}
-                </button>
-              `).join('')}
-            </div>
+                  <kbd class="nav-shortcut">${shortcutLabel(s.id) || navIndex}</kbd>
+                </button>`;
+                }).join('')}
+              </div>
+            `).join('')}
           </div>
 
           <div class="sidebar-actions">
-            <button class="btn btn-primary full" onclick="handleSave()">Save Shift</button>
-            <button class="btn btn-secondary full">Save as Draft</button>
-            <button class="btn btn-text full">Discard Changes</button>
+            ${isHome
+              ? `<button class="btn btn-primary" onclick="setSection('date')">Start Entry ${svg('chevR')}</button>`
+              : nextId
+              ? `<button class="btn btn-primary" onclick="setSection('${nextId}')">Next: ${nextLabel} ${svg('chevR')}</button>`
+              : `<button class="btn btn-primary" onclick="handleSave()">Save Shift ${svg('check')}</button>`
+            }
+            <button class="btn btn-secondary" ${isHome ? 'onclick="focusNavPanel()"' : prevId ? `onclick="setSection('${prevId}')"` : `onclick="setSection('home')"`}>${svg('chevL')} ${isHome ? 'Nav' : 'Previous'}</button>
+            <button class="btn btn-secondary">Save Draft</button>
+            <button class="btn btn-text">Discard</button>
           </div>
         </div>
       </aside>
 
       <main class="main">
-        ${renderSection(dur, wageEarnings, wageDur)}
+        ${isHome ? '' : renderSectionTools(nextLabel)}
+        ${isHome ? renderHomeDashboard(dur, wageEarnings, wageDur, total) : renderSection(dur, wageEarnings, wageDur)}
       </main>
 
       <aside class="sidebar-r">
         <div class="sticky">
+          ${isHome ? renderHomeSide(dur, total, wageEarnings) : `
           <div class="card card-pad">
             <div class="sum-hdr">
               <div class="sum-title"><span>Live Summary</span><div class="live-dot"></div></div>
@@ -882,6 +1247,14 @@ function render() {
               <span class="sum-val ${fd.shift.tips.amount === null ? 'muted' : 'emerald'}">${fd.shift.tips.amount !== null ? '$' + fd.shift.tips.amount : '—'}</span>
             </div>
             <div class="divider"></div>
+            <div class="sum-item" style="${!otherTotal() ? 'opacity:.4' : ''}">
+              <div class="sum-left">
+                <div class="sum-icon bg-blue">${svg('dollar',13)}</div>
+                <span class="sum-lbl">Other</span>
+              </div>
+              <span class="sum-val ${otherTotal() ? 'emerald' : 'muted'}">${otherTotal() ? money(otherTotal()) : '—'}</span>
+            </div>
+            <div class="divider"></div>
             <div class="sum-item" style="${!wageEarnings ? 'opacity:.4' : ''}">
               <div class="sum-left">
                 <div class="sum-icon bg-emerald">${svg('money',13)}</div>
@@ -898,16 +1271,6 @@ function render() {
               </div>
             </div>
             <div class="sum-note">Updates automatically</div>
-          </div>
-
-          <div class="card card-pad">
-            <div class="help-inner">
-              <div class="help-ico">${svg('bulb',14)}</div>
-              <div>
-                <div class="help-title">Time Shortcuts</div>
-                <p class="help-p">Type <strong>5</strong> → 5:00 PM · <strong>9</strong> → 9:00 AM · <strong>530</strong> → 5:30 PM · <strong>1730</strong> → 5:30 PM · <strong>9a</strong> or <strong>2p</strong> to force AM/PM</p>
-              </div>
-            </div>
           </div>
 
           <div class="card card-pad">
@@ -939,10 +1302,198 @@ function render() {
               <span>Press <kbd class="kbd">⌘ + S</kbd> to save</span>
             </div>
           </div>
+          `}
         </div>
       </aside>
     </div>
   </div>`;
+  requestAnimationFrame(applyFocusedGroupClass);
+}
+
+// ─────────────────────────────────────────────
+//  HOME DASHBOARD
+// ─────────────────────────────────────────────
+function shortcutLabel(id) {
+  const entry = Object.entries(sectionShortcuts).find(([, section]) => section === id);
+  return entry ? entry[0].toUpperCase() : '';
+}
+
+function money(value) {
+  return '$' + Number(value || 0).toFixed(2);
+}
+
+function renderHomeDashboard(dur, wageEarnings, wageDur, total) {
+  const shift = state.formData.shift;
+  const date = shift.date ? formatDateDisplay(shift.date) : null;
+  const teamRows = shift.team.members.filter(m => !isEmptyTeamMember(m));
+  const tips = shift.tips.amount || 0;
+  const wageValue = wageEarnings ? Number(wageEarnings) : 0;
+  const otherValue = otherTotal();
+  const shiftHours = calcDuration(shift.times.start, shift.times.end);
+  const totalHours = teamRows.reduce((sum, m) => sum + (calcDuration(m.startTime, m.endTime) || 0), 0);
+  const tipsPerHour = shiftHours ? tips / shiftHours : 0;
+  const recentSameDayTipsPerHour = 31.4;
+  const lastShiftTipsPerHour = 28.75;
+  const sameDayDelta = recentSameDayTipsPerHour ? ((tipsPerHour - recentSameDayTipsPerHour) / recentSameDayTipsPerHour) * 100 : 0;
+  const lastShiftDelta = lastShiftTipsPerHour ? ((tipsPerHour - lastShiftTipsPerHour) / lastShiftTipsPerHour) * 100 : 0;
+  const memberCountDelta = teamRows.length - 4;
+  const totalHoursDelta = totalHours - 27.5;
+  const partyTitle = shift.events.busyLevel ? `${busyLabels[shift.events.busyLevel - 1]} service` : 'Party details';
+  const partySubtitle = shift.events.items.length
+    ? shift.events.items.slice(0, 2).map(item => item.desc).filter(Boolean).join(' · ')
+    : 'Add notable parties, rushes, comps, weather, and other context in Events.';
+  const maxHours = Math.max(shiftHours || 0, wageDur || 0, totalHours || 0, 1);
+  const bars = [
+    { label: 'Shift', value: shiftHours || 0 },
+    { label: 'Wage', value: wageDur || 0 },
+    { label: 'Team', value: totalHours || 0 }
+  ];
+  return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div class="section-row">
+          <h2 class="section-title">Shift Dashboard</h2>
+          ${statusPill('Live', 'live')}
+        </div>
+      </div>
+      <div class="card home-card">
+        <div class="home-top">
+          <div class="home-hero">
+            <div>
+              <div class="home-eyebrow">${date ? date.day : 'New shift'}</div>
+              <div class="home-title">${date ? date.full : 'No date selected'}</div>
+              <div class="home-subtitle">
+                ${shift.times.start || shift.times.end
+                  ? `${shift.times.start ? formatTimeDisplay(shift.times.start) : 'Start missing'} to ${shift.times.end ? formatTimeDisplay(shift.times.end) : 'end missing'}${shiftHours ? `, ${shiftHours.toFixed(1)} scheduled hours` : ''}.`
+                  : 'Set your start and end time to unlock hourly comparisons and earnings pace.'}
+              </div>
+            </div>
+            <div class="home-detail-row">
+              <span class="detail-chip">${svg('clock',13)} ${shiftHours ? shiftHours.toFixed(1) + ' shift hrs' : 'Hours needed'}</span>
+              <span class="detail-chip">${svg('money',13)} ${money(shift.wage.hourlyRate)}/hr</span>
+              <span class="detail-chip">${svg('users',13)} ${teamRows.length || 0} bartenders</span>
+              <span class="detail-chip">${svg('trend',13)} ${tipsPerHour ? money(tipsPerHour) + '/tip hr' : 'No tip pace yet'}</span>
+            </div>
+          </div>
+          <div class="earnings-card">
+            <div>
+              <div class="dash-label">Total Earnings</div>
+              <div class="earnings-total">${money(total)}</div>
+            </div>
+            <div class="earnings-breakdown">
+              <div class="earnings-line"><span>Tips</span><strong>${money(tips)}</strong></div>
+              <div class="earnings-line"><span>Wage</span><strong>${money(wageValue)}</strong></div>
+              <div class="earnings-line"><span>Other</span><strong>${money(otherValue)}</strong></div>
+              <div class="earnings-line"><span>Hourly rate</span><strong>${money(shift.wage.hourlyRate)}/hr</strong></div>
+              <div class="earnings-line"><span>Tips per hour</span><strong>${tipsPerHour ? money(tipsPerHour) : '—'}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="dash-panel">
+            <div class="dash-label">Shift Hours</div>
+            <div class="dash-value">${shiftHours ? shiftHours.toFixed(1) : '—'}</div>
+            <div class="dash-note">${shift.times.start ? formatTimeDisplay(shift.times.start) : '—'} – ${shift.times.end ? formatTimeDisplay(shift.times.end) : '—'}</div>
+          </div>
+          <div class="dash-panel">
+            <div class="dash-label">Wage Hours</div>
+            <div class="dash-value">${wageDur ? wageDur.toFixed(1) : '—'}</div>
+            <div class="dash-note">${wageEarnings ? `${money(wageValue)} at ${money(shift.wage.hourlyRate)}/hr` : 'Need hours and rate'}</div>
+          </div>
+          <div class="dash-panel">
+            <div class="dash-label">Team Hours</div>
+            <div class="dash-value">${totalHours ? totalHours.toFixed(1) : '—'}</div>
+            <div class="dash-note">${totalHoursDelta >= 0 ? '+' : ''}${totalHoursDelta.toFixed(1)} vs recent global average</div>
+          </div>
+          <div class="dash-panel">
+            <div class="dash-label">Bartenders</div>
+            <div class="dash-value">${teamRows.length || '—'}</div>
+            <div class="dash-note">${memberCountDelta >= 0 ? '+' : ''}${memberCountDelta} vs recent count</div>
+          </div>
+        </div>
+        <div class="dashboard-band">
+          <div class="dash-panel">
+            <div class="dash-label">Bartenders</div>
+            <div class="dash-list">
+              ${teamRows.length ? teamRows.map((m, i) => {
+                const hours = calcDuration(m.startTime, m.endTime);
+                return `<div class="dash-row">
+                  <span class="dash-person">${personChip(m.name, i, true)} <span class="dash-person-name">${m.name || '—'}</span>${m.isUser ? `<span class="team-user-badge" title="You">${svg('crown',13)}</span>` : ''}${locationPill(m.location)}</span>
+                  <span>${hours !== null ? hours.toFixed(1) + ' hrs' : '—'}</span>
+                </div>`;
+              }).join('') : `<div class="dash-row"><span>No bartenders logged</span><span>—</span></div>`}
+            </div>
+            <div class="team-total-row"><span>Total team hours</span><span>${totalHours ? totalHours.toFixed(1) : '—'}</span></div>
+          </div>
+          <div class="compare-card">
+            <div class="dash-label">${partyTitle}</div>
+            <div class="dash-value" style="font-size:1rem;margin-bottom:6px;">Important details</div>
+            <div class="dash-note">${partySubtitle || 'No additional details logged yet.'}</div>
+            <div class="mini-bars">
+              ${bars.map(bar => `<div class="mini-bar" title="${bar.label}: ${bar.value.toFixed(1)} hrs" style="height:${Math.max(10, (bar.value / maxHours) * 76)}px"></div>`).join('')}
+            </div>
+            <div class="earnings-line" style="margin-top:8px;">${bars.map(bar => `<span>${bar.label} ${bar.value ? bar.value.toFixed(1) : '—'}</span>`).join('')}</div>
+          </div>
+        </div>
+        <div class="dashboard-band">
+          <div class="compare-card">
+            <div class="dash-label">Tips/hour vs same weekday</div>
+            <div class="compare-main">
+              <div class="compare-value">${tipsPerHour ? money(tipsPerHour) : '—'}</div>
+              <div class="compare-delta ${sameDayDelta >= 0 ? 'up' : 'down'}">${tipsPerHour ? `${sameDayDelta >= 0 ? '+' : ''}${sameDayDelta.toFixed(0)}%` : '—'}</div>
+            </div>
+            <div class="dash-note">Recent ${date ? date.day : 'same-day'} benchmark: ${money(recentSameDayTipsPerHour)}/hr.</div>
+          </div>
+          <div class="compare-card">
+            <div class="dash-label">Tips/hour vs last shift</div>
+            <div class="compare-main">
+              <div class="compare-value">${tipsPerHour ? money(tipsPerHour) : '—'}</div>
+              <div class="compare-delta ${lastShiftDelta >= 0 ? 'up' : 'down'}">${tipsPerHour ? `${lastShiftDelta >= 0 ? '+' : ''}${lastShiftDelta.toFixed(0)}%` : '—'}</div>
+            </div>
+            <div class="dash-note">Last logged shift pace: ${money(lastShiftTipsPerHour)}/hr.</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderHomeSide(dur, total, wageEarnings) {
+  return `
+    <div class="card card-pad">
+      <div class="stats-title">Keyboard</div>
+      <div class="stat-row"><span class="stat-lbl">Focus left nav</span><span class="stat-val">L</span></div>
+      <div class="stat-row"><span class="stat-lbl">Move nav</span><span class="stat-val">↑ ↓</span></div>
+      <div class="stat-row"><span class="stat-lbl">Open / close page</span><span class="stat-val">Enter</span></div>
+      <div class="stat-row"><span class="stat-lbl">Enter first field</span><span class="stat-val">Space</span></div>
+      <div class="stat-row"><span class="stat-lbl">Leave field mode</span><span class="stat-val">Esc</span></div>
+    </div>
+    <div class="card card-pad">
+      <div class="stats-title">Snapshot</div>
+      <div class="stat-row"><span class="stat-lbl">Duration</span><span class="stat-val">${dur === '—' ? '—' : dur + ' hrs'}</span></div>
+      <div class="stat-row"><span class="stat-lbl">Wage</span><span class="stat-val">${wageEarnings ? '$' + wageEarnings : '—'}</span></div>
+      <div class="stat-row"><span class="stat-lbl">Total</span><span class="stat-val emerald">$${total.toFixed(2)}</span></div>
+    </div>`;
+}
+
+function renderSectionTools(nextLabel) {
+  return `
+    <div class="section-tools">
+      <button class="tool-chip" type="button" onclick="focusNextField(-1)" title="Previous field">
+        ${svg('chevL',12)} Field <kbd>⌥←</kbd>
+      </button>
+      <button class="tool-chip" type="button" onclick="focusNextField(1)" title="Next field">
+        Field ${svg('chevR',12)} <kbd>⌥→</kbd>
+      </button>
+      <button class="tool-chip" type="button" onclick="focusNextGroup(-1)" title="Previous group">
+        ${svg('chevL',12)} Group <kbd>⌥↑</kbd>
+      </button>
+      <button class="tool-chip" type="button" onclick="focusNextGroup(1)" title="Next group">
+        Group ${svg('chevR',12)} <kbd>⌥↓</kbd>
+      </button>
+      <button class="tool-chip" type="button" onclick="nextSection()" title="Next page">
+        ${nextLabel ? 'Next: ' + nextLabel : 'Save'} <kbd>⌥⇧→</kbd>
+      </button>
+    </div>`;
 }
 
 // ─────────────────────────────────────────────
@@ -959,9 +1510,8 @@ function renderSection(dur, wageEarnings, wageDur) {
         <div>
           <div class="section-row">
             <h2 class="section-title">Shift Date</h2>
-            <span class="badge badge-red">Required</span>
+            ${sectionStatus('date')}
           </div>
-          <div class="section-sub">When did this shift take place?</div>
         </div>
       </div>
       <div class="card form-card">
@@ -993,9 +1543,8 @@ function renderSection(dur, wageEarnings, wageDur) {
         <div>
           <div class="section-row">
             <h2 class="section-title">Shift Times</h2>
-            <span class="badge badge-purple">Optional</span>
+            ${sectionStatus('times')}
           </div>
-          <div class="section-sub">When did your shift start and end?</div>
         </div>
       </div>
       <div class="card form-card">
@@ -1020,7 +1569,7 @@ function renderSection(dur, wageEarnings, wageDur) {
           </div>` : ''}
         <div>
           <div class="breaks-header" style="margin-bottom:10px;">
-            <label class="form-label">Break Time <span class="optional">(Optional)</span></label>
+            <label class="form-label">Break Time</label>
             <button class="btn-link" onclick="addBreak()">+ Add Break</button>
           </div>
           ${fd.shift.times.breaks.map((b,i) => `
@@ -1070,22 +1619,21 @@ function renderSection(dur, wageEarnings, wageDur) {
         <div>
           <div class="section-row">
             <h2 class="section-title">Tips &amp; Earnings</h2>
-            <span class="badge badge-amber">Optional</span>
+            ${sectionStatus('tips')}
           </div>
-          <div class="section-sub">Record your tip earnings.</div>
         </div>
       </div>
       <div class="card form-card">
         <div class="form-group">
-          <label class="form-label">Total Tips <span class="optional">(leave blank if not yet logged)</span></label>
+          <label class="form-label">Total Tips</label>
           <div class="input-wrap form-input-prefix">
             <span class="prefix-sym">$</span>
-            <input type="number" class="form-input form-input-lg" value="${hasTips ? fd.shift.tips.amount : ''}" oninput="updateTips(this.value)" placeholder="—">
+            <input type="number" class="form-input form-input-lg" value="${hasTips ? fd.shift.tips.amount : ''}" oninput="updateTips(this.value, false)" onblur="commitFormInput()" placeholder="">
           </div>
         </div>
         <div>
           <div class="pools-header" style="margin-bottom:10px;">
-            <label class="form-label">Tip Pool Breakdown <span class="optional">(Optional)</span></label>
+            <label class="form-label">Tip Pool Breakdown</label>
             <button class="btn-link" onclick="addPool()">+ Add Pool</button>
           </div>
           ${fd.shift.tips.pools.map((p,i) => {
@@ -1093,11 +1641,11 @@ function renderSection(dur, wageEarnings, wageDur) {
             return `<div class="card pool-card" style="margin-bottom:8px;">
               <div class="pool-grid">
                 <div class="form-group">
-                  <input type="text" class="form-input" value="${p.name}" oninput="updatePool(${i},'name',this.value)" placeholder="Pool name">
+                  <input type="text" class="form-input" value="${p.name}" oninput="updatePool(${i},'name',this.value, false)" onblur="commitFormInput()" placeholder="">
                 </div>
                 <div class="form-group form-input-prefix" style="position:relative">
                   <span class="prefix-sym" style="top:50%;transform:translateY(-50%);">$</span>
-                  <input type="number" class="form-input" style="padding-left:22px" value="${p.amount}" oninput="updatePool(${i},'amount',parseFloat(this.value)||0)" placeholder="0.00">
+                  <input type="number" class="form-input" style="padding-left:22px" value="${p.amount}" oninput="updatePool(${i},'amount',parseFloat(this.value)||0, false)" onblur="commitFormInput()" placeholder="">
                 </div>
                 <div style="display:flex;align-items:center;">
                   <button class="btn-danger" onclick="removePool(${i})">×</button>
@@ -1137,18 +1685,13 @@ function renderSection(dur, wageEarnings, wageDur) {
         <div>
           <div class="section-row">
             <h2 class="section-title">Wage</h2>
-            <span class="badge badge-emerald">Optional</span>
+            ${sectionStatus('wage')}
           </div>
-          <div class="section-sub">Your hourly pay. Seeded from shift times — override if needed.</div>
         </div>
       </div>
       <div class="card form-card">
         <div>
           <div class="wage-sub-label">Hours Worked</div>
-          <div class="wage-seeded-hint">
-            ${svg('clock', 12)}
-            <span>Seeded from shift times${mainStart && mainEnd ? ` (${formatTimeDisplay(mainStart)} – ${formatTimeDisplay(mainEnd)})` : mainStart ? ` (${formatTimeDisplay(mainStart)} – ?)` : ' — no times set yet'}. Edit below to override.</span>
-          </div>
           <div class="form-grid" style="margin-bottom:12px;">
             ${renderSmartTimeField({ id: 'wage-start', label: 'Wage Start', value: effectiveStart, required: false, isEnd: false })}
             ${renderSmartTimeField({ id: 'wage-end', label: 'Wage End', value: effectiveEnd, required: false, isEnd: true, startValue: wStartH24 })}
@@ -1181,7 +1724,7 @@ function renderSection(dur, wageEarnings, wageDur) {
             <label class="form-label">Rate per Hour</label>
             <div class="input-wrap form-input-prefix" style="position:relative">
               <span class="prefix-sym">$</span>
-              <input type="number" class="form-input" style="padding-left:22px;font-size:1.1rem;font-weight:700;" value="${w.hourlyRate !== null ? w.hourlyRate : ''}" oninput="updateWageRate(parseFloat(this.value)||null)" placeholder="—" step="0.25">
+              <input type="number" class="form-input" style="padding-left:22px;font-size:1.1rem;font-weight:700;" value="${w.hourlyRate !== null ? w.hourlyRate : ''}" oninput="updateWageRate(parseFloat(this.value)||null, false)" onblur="commitFormInput()" placeholder="" step="0.25">
             </div>
             <span style="font-size:0.7rem;color:var(--gray-600)">Seeded to $6.00</span>
           </div>
@@ -1210,62 +1753,143 @@ function renderSection(dur, wageEarnings, wageDur) {
       </div>
       <div class="form-nav" style="margin-top:8px;">
         <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
-        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Team ${svg('chevR')}</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Other ${svg('chevR')}</button>
+      </div>
+    </div>`;
+  }
+
+  if (sec === 'other') {
+    const other = fd.shift.other;
+    return `
+    <div class="animate-in">
+      <div class="section-header">
+        <div>
+          <div class="section-row"><h2 class="section-title">Other Earnings</h2>${sectionStatus('other')}</div>
+        </div>
+      </div>
+      <div class="card form-card">
+        <div class="field-section">
+          <div class="field-section-hdr">
+            <div>
+              <div class="field-section-title">Add Earnings Event</div>
+              <div class="field-section-sub">Cash, digital, overtime, or miscellaneous earnings from this shift.</div>
+            </div>
+            <div class="seg-control">
+              ${otherEarningTypes.map(type => `<button type="button" class="seg-btn" onclick="addOtherEarning('${type}')">+ ${type}</button>`).join('')}
+            </div>
+          </div>
+          <div class="dash-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));">
+            ${otherEarningTypes.map(type => `
+              <div class="dash-panel" style="min-height:auto;padding:12px;">
+                <div class="dash-label">${type}</div>
+                <div class="dash-value">${money(otherTotal(type))}</div>
+                <div class="dash-note">${other.entries.filter(entry => entry.type === type).length} entries</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="field-section">
+          <div class="field-section-hdr">
+            <div>
+              <div class="field-section-title">Entries</div>
+              <div class="field-section-sub">Each row is included in total earnings.</div>
+            </div>
+            <strong style="color:var(--emerald-400);font-size:1rem;">${money(otherTotal())}</strong>
+          </div>
+          ${other.entries.length ? other.entries.map((entry, i) => `
+            <div class="card pool-card" style="margin-bottom:8px;">
+              <div style="display:grid;grid-template-columns:minmax(120px,.75fr) minmax(110px,.55fr) minmax(180px,1.4fr) auto;gap:10px;align-items:end;">
+                <div class="form-group">
+                  <label class="form-label-sm">Type</label>
+                  <select class="form-input" onchange="updateOtherEarning(${i}, 'type', this.value, false)" onblur="commitFormInput()">
+                    ${otherEarningTypes.map(type => `<option value="${type}" ${entry.type === type ? 'selected' : ''}>${type}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="form-group form-input-prefix" style="position:relative">
+                  <label class="form-label-sm">Amount</label>
+                  <span class="prefix-sym" style="top:calc(50% + 9px);">$</span>
+                  <input type="number" class="form-input" style="padding-left:22px" value="${entry.amount ?? ''}" oninput="updateOtherEarningNumber(${i}, this.value, false)" onblur="commitFormInput()" step="0.01">
+                </div>
+                <div class="form-group">
+                  <label class="form-label-sm">Note</label>
+                  <input type="text" class="form-input" value="${entry.note || ''}" oninput="updateOtherEarning(${i}, 'note', this.value, false)" onblur="commitFormInput()" placeholder="">
+                </div>
+                <div style="display:flex;align-items:flex-end;">
+                  <button class="btn-danger" onclick="removeOtherEarning(${i})">Remove</button>
+                </div>
+              </div>
+            </div>
+          `).join('') : `
+            <div style="padding:20px;text-align:center;color:var(--gray-500);font-size:0.8rem;border:1px dashed var(--border);border-radius:var(--radius-lg);">
+              No other earnings logged yet.
+            </div>`}
+        </div>
+      </div>
+      <div class="form-nav" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Chump ${svg('chevR')}</button>
       </div>
     </div>`;
   }
 
   if (sec === 'team') {
+    ensureTeamInitialized();
     const team = fd.shift.team;
-    const presetRoles = ['Server','Bartender','Host','Busser','Runner','Barback','Manager'];
-    const presetSections = ['Bar','Floor','Patio','Private Dining','Takeout'];
     return `
     <div class="animate-in">
       <div class="section-header">
         <div>
-          <div class="section-row"><h2 class="section-title">Team</h2><span class="badge badge-blue">Optional</span></div>
-          <div class="section-sub">Who did you work with tonight?</div>
+          <div class="section-row"><h2 class="section-title">Team</h2>${sectionStatus('team')}</div>
         </div>
       </div>
       <div class="card form-card">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Your Role <span class="optional">(Optional)</span></label>
-            <input type="text" class="form-input" value="${team.role||''}" oninput="updateTeam('role',this.value)" placeholder="e.g. Server, Bartender…">
-            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;">
-              ${presetRoles.map(r=>`<button onclick="updateTeam('role','${r}')" style="padding:3px 8px;border-radius:999px;font-size:0.7rem;border:1px solid ${team.role===r?'rgba(139,92,246,.5)':'var(--border)'};background:${team.role===r?'rgba(139,92,246,.12)':'transparent'};color:${team.role===r?'var(--purple-400)':'var(--gray-500)'};cursor:pointer;transition:all 0.15s;">${r}</button>`).join('')}
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Section / Station <span class="optional">(Optional)</span></label>
-            <input type="text" class="form-input" value="${team.section||''}" oninput="updateTeam('section',this.value)" placeholder="e.g. Bar, Floor, Patio…">
-            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;">
-              ${presetSections.map(s=>`<button onclick="updateTeam('section','${s}')" style="padding:3px 8px;border-radius:999px;font-size:0.7rem;border:1px solid ${team.section===s?'rgba(139,92,246,.5)':'var(--border)'};background:${team.section===s?'rgba(139,92,246,.12)':'transparent'};color:${team.section===s?'var(--purple-400)':'var(--gray-500)'};cursor:pointer;transition:all 0.15s;">${s}</button>`).join('')}
-            </div>
-          </div>
-        </div>
         <div>
           <div class="breaks-header" style="margin-bottom:10px;">
-            <label class="form-label">Team Members <span class="optional">(Optional)</span></label>
+            <label class="form-label">Bartenders</label>
             <button class="btn-link" onclick="addTeamMember()">+ Add</button>
           </div>
-          ${team.members.map((m,i)=>`
-            <div class="card break-card" style="margin-bottom:8px;">
-              <div class="break-grid">
-                <div class="form-group">
-                  <label class="form-label-sm">Name</label>
-                  <input type="text" class="form-input" value="${m.name||''}" oninput="updateTeamMember(${i},'name',this.value)" placeholder="Name">
+          <div class="team-table">
+            <div class="team-row team-head">
+              <div class="team-cell"></div>
+              <div class="team-cell">Name</div>
+              <div class="team-cell">Start</div>
+              <div class="team-cell">End</div>
+              <div class="team-cell">Location</div>
+              <div class="team-cell">Hours</div>
+              <div class="team-cell"></div>
+            </div>
+            ${team.members.map((m,i)=>`
+              <div class="team-row ${m.isUser ? 'team-row-user' : ''}">
+                <div class="team-cell" style="justify-content:center;">
+                  ${personChip(m.name, i)}
                 </div>
-                <div class="form-group">
-                  <label class="form-label-sm">Role</label>
-                  <input type="text" class="form-input" value="${m.role||''}" oninput="updateTeamMember(${i},'role',this.value)" placeholder="Role">
+                <div class="team-cell">
+                  <div class="team-name-wrap">
+                    <input type="text" class="form-input" id="team-name-${i}" value="${m.name||''}" onfocus="renderTeamNameSuggestions(${i})" oninput="updateTeamMember(${i},'name',this.value, false); renderTeamNameSuggestions(${i})" onblur="commitTeamName(${i})" onkeydown="teamCellKeydown(event, ${i}, 'name')">
+                    ${m.isUser ? `<span class="team-user-badge" title="You">${svg('crown',13)}</span>` : ''}
+                  </div>
                 </div>
-                <div style="display:flex;align-items:flex-end;">
-                  <button class="btn-danger" onclick="removeTeamMember(${i})">Remove</button>
+                <div class="team-cell">
+                  ${renderSmartTimeField({ id: 'team-start-'+i, label: '', value: m.startTime, required: false, isEnd: false })}
+                </div>
+                <div class="team-cell">
+                  ${renderSmartTimeField({ id: 'team-end-'+i, label: '', value: m.endTime, required: false, isEnd: true })}
+                </div>
+                <div class="team-cell">
+                  <div id="disp-team-location-${i}" onclick="activateTeamLocation(${i})" style="width:100%;">
+                    ${locationDisplay(m.location)}
+                  </div>
+                  <input type="text" class="form-input location-input location-${(m.location || '').toLowerCase()}" id="team-location-${i}" value="${m.location || ''}" style="display:none;" oninput="updateTeamLocationInput(${i}, this.value)" onblur="commitTeamLocation(${i})" onkeydown="teamCellKeydown(event, ${i}, 'location')">
+                </div>
+                <div class="team-cell">
+                  ${(() => { const h = calcDuration(m.startTime, m.endTime); return `<div class="team-hours ${h !== null ? 'active' : ''}">${h !== null ? h.toFixed(1) : '—'}</div>`; })()}
+                </div>
+                <div class="team-cell">
+                  ${m.isUser ? '' : `<button class="btn-danger" onclick="removeTeamMember(${i})">×</button>`}
                 </div>
               </div>
-            </div>
-          `).join('')}
+            `).join('')}
+          </div>
         </div>
       </div>
       <div class="form-nav" style="margin-top:8px;">
@@ -1281,20 +1905,19 @@ function renderSection(dur, wageEarnings, wageDur) {
     <div class="animate-in">
       <div class="section-header">
         <div>
-          <div class="section-row"><h2 class="section-title">Events</h2><span class="badge badge-purple">Optional</span></div>
-          <div class="section-sub">Notable moments from tonight's shift</div>
+          <div class="section-row"><h2 class="section-title">Events</h2>${sectionStatus('events')}</div>
         </div>
       </div>
       <div class="card form-card">
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Busy Level <span class="optional">(Optional)</span></label>
+            <label class="form-label">Busy Level</label>
             <div style="display:flex;gap:6px;">
               ${busyLabels.map((lbl,i)=>`<button onclick="updateEvents('busyLevel',${i+1})" style="flex:1;padding:6px 4px;border-radius:var(--radius-md);font-size:0.65rem;font-weight:600;cursor:pointer;border:1px solid ${ev.busyLevel===i+1?'rgba(245,158,11,.5)':'var(--border)'};background:${ev.busyLevel===i+1?'rgba(245,158,11,.12)':'transparent'};color:${ev.busyLevel===i+1?'var(--amber-400)':'var(--gray-500)'};transition:all 0.15s;">${lbl}</button>`).join('')}
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Shift Rating <span class="optional">(Optional)</span></label>
+            <label class="form-label">Shift Rating</label>
             <div style="display:flex;gap:4px;">
               ${[1,2,3,4,5].map(n=>`<button onclick="updateEvents('shiftRating',${n})" style="flex:1;padding:8px 4px;border-radius:var(--radius-md);font-size:0.85rem;cursor:pointer;border:1px solid ${n<=(ev.shiftRating||0)?'rgba(245,158,11,.4)':'var(--border)'};background:${n<=(ev.shiftRating||0)?'rgba(245,158,11,.1)':'transparent'};color:${n<=(ev.shiftRating||0)?'var(--amber-400)':'var(--gray-600)'};transition:all 0.1s;">★</button>`).join('')}
             </div>
@@ -1302,7 +1925,7 @@ function renderSection(dur, wageEarnings, wageDur) {
         </div>
         <div>
           <div class="breaks-header" style="margin-bottom:10px;">
-            <label class="form-label">Notable Events <span class="optional">(Optional)</span></label>
+            <label class="form-label">Notable Events</label>
             <button class="btn-link" onclick="addEvent()">+ Add Event</button>
           </div>
           ${ev.items.map((item,i)=>`
@@ -1314,7 +1937,7 @@ function renderSection(dur, wageEarnings, wageDur) {
                 </div>
                 <div class="form-group">
                   <label class="form-label-sm">Description</label>
-                  <input type="text" class="form-input" value="${item.desc||''}" oninput="updateEvent(${i},'desc',this.value)" placeholder="e.g. Large party of 14…">
+                  <input type="text" class="form-input" value="${item.desc||''}" oninput="updateEvent(${i},'desc',this.value, false)" onblur="commitFormInput()" placeholder="">
                 </div>
                 <div style="display:flex;align-items:flex-end;">
                   <button class="btn-danger" onclick="removeEvent(${i})">Remove</button>
@@ -1326,69 +1949,151 @@ function renderSection(dur, wageEarnings, wageDur) {
       </div>
       <div class="form-nav" style="margin-top:8px;">
         <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
-        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Chump ${svg('chevR')}</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Notes ${svg('chevR')}</button>
       </div>
     </div>`;
   }
 
   if (sec === 'chump') {
     const ch = fd.shift.chump;
+    const played = ch.played === true;
+    const chumpTotal = ch.useDetailedAmount ? (Number(ch.coins || 0) + Number(ch.cash || 0)) : Number(ch.amount || 0);
+    const teamChoices = fd.shift.team.members.filter(m => !isEmptyTeamMember(m) && m.name);
+    const chumpPlayers = ch.players || [];
+    const playerNames = [...new Set([...teamChoices.map(m => m.name), ...chumpPlayers].filter(Boolean))];
     return `
     <div class="animate-in">
       <div class="section-header">
         <div>
-          <div class="section-row"><h2 class="section-title">Chump</h2><span class="badge badge-blue">Optional</span></div>
-          <div class="section-sub">Who was tonight's table from hell?</div>
+          <div class="section-row"><h2 class="section-title">Chump</h2>${sectionStatus('chump')}</div>
         </div>
       </div>
       <div class="card form-card">
-        <div>
-          <div class="breaks-header" style="margin-bottom:10px;">
-            <label class="form-label">Nominations <span class="optional">(Optional)</span></label>
-            <button class="btn-link" onclick="addNomination()">+ Add Nomination</button>
+        <div class="field-section">
+          <button class="big-toggle ${played ? 'active' : ''}" type="button" onclick="toggleChumpPlayed()">
+            <span>
+              <span class="big-toggle-title">${played ? 'Chump game played' : 'No Chump game'}</span>
+              <span class="big-toggle-sub">Track the closer coin-flip game, winner payout, player count, and expected-value data.</span>
+            </span>
+            <span class="toggle-knob"></span>
+          </button>
+        </div>
+
+        <div class="field-section ${played ? '' : 'muted'}">
+          <div class="field-section-hdr">
+            <div>
+              <div class="field-section-title">Result</div>
+              <div class="field-section-sub">Whether you personally won or lost the flip.</div>
+            </div>
+            ${statusPill(played ? 'Applicable' : 'Hidden', played ? 'live' : 'muted')}
           </div>
-          ${ch.nominations.length === 0 ? `
-            <div style="padding:20px;text-align:center;color:var(--gray-600);font-size:0.8rem;border:1px dashed var(--border);border-radius:var(--radius-lg);">
-              🏆 No nominations yet — hopefully it was a good night
-            </div>` : ''}
-          ${ch.nominations.map((n,i)=>`
-            <div class="card pool-card" style="margin-bottom:8px;">
-              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
-                <div class="form-group">
-                  <label class="form-label-sm">Table / Guest</label>
-                  <input type="text" class="form-input" value="${n.label||''}" oninput="updateNomination(${i},'label',this.value)" placeholder="Table 12, party of 6…">
-                </div>
-                <div class="form-group">
-                  <label class="form-label-sm">Offence</label>
-                  <input type="text" class="form-input" value="${n.reason||''}" oninput="updateNomination(${i},'reason',this.value)" placeholder="10% tip, rude…">
-                </div>
-                <div style="display:flex;align-items:flex-end;">
-                  <button class="btn-danger" onclick="removeNomination(${i})">Remove</button>
-                </div>
+          <div class="seg-control">
+            <button type="button" class="seg-btn win ${ch.didWin === true ? 'active' : ''}" onclick="updateChump('didWin', true)">Win</button>
+            <button type="button" class="seg-btn loss ${ch.didWin === false ? 'active' : ''}" onclick="updateChump('didWin', false)">Loss</button>
+          </div>
+        </div>
+
+        <div class="field-section ${played ? '' : 'muted'}">
+          <div class="field-section-hdr">
+            <div>
+              <div class="field-section-title">Chump Amount</div>
+              <div class="field-section-sub">Log the winner payout. Use total amount, or split it into coins and leftover cash.</div>
+            </div>
+            <div class="seg-control">
+              <button type="button" class="seg-btn ${!ch.useDetailedAmount ? 'active' : ''}" onclick="updateChump('useDetailedAmount', false)">Total</button>
+              <button type="button" class="seg-btn ${ch.useDetailedAmount ? 'active' : ''}" onclick="updateChump('useDetailedAmount', true)">Detail</button>
+            </div>
+          </div>
+          ${ch.useDetailedAmount ? `
+            <div class="form-grid">
+              <div class="form-group form-input-prefix" style="position:relative">
+                <label class="form-label-sm">Coins</label>
+                <span class="prefix-sym" style="top:calc(50% + 9px);">$</span>
+                <input type="number" class="form-input" style="padding-left:22px" value="${ch.coins ?? ''}" oninput="updateChumpNumber('coins', this.value, false)" onblur="commitFormInput()" step="0.01">
               </div>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-                <label class="form-label-sm" style="white-space:nowrap">Severity:</label>
-                ${[1,2,3,4,5].map(s=>`<button onclick="updateNomination(${i},'severity',${s})" style="background:none;border:none;cursor:pointer;font-size:1rem;color:${s<=(n.severity||0)?'var(--pink-400)':'var(--gray-700)'};transition:color 0.1s">💀</button>`).join('')}
+              <div class="form-group form-input-prefix" style="position:relative">
+                <label class="form-label-sm">Cash</label>
+                <span class="prefix-sym" style="top:calc(50% + 9px);">$</span>
+                <input type="number" class="form-input" style="padding-left:22px" value="${ch.cash ?? ''}" oninput="updateChumpNumber('cash', this.value, false)" onblur="commitFormInput()" step="0.01">
+              </div>
+            </div>` : `
+            <div class="form-group form-input-prefix" style="position:relative;max-width:260px;">
+              <label class="form-label-sm">Amount Winner Gets</label>
+              <span class="prefix-sym" style="top:calc(50% + 9px);">$</span>
+              <input type="number" class="form-input" style="padding-left:22px" value="${ch.amount ?? ''}" oninput="updateChumpNumber('amount', this.value, false)" onblur="commitFormInput()" step="0.01">
+            </div>`}
+          <div class="duration-bar" style="margin-top:12px;border-color:rgba(245,158,11,.22);background:rgba(245,158,11,.06)">
+            <div class="duration-left">
+              <div class="duration-dot" style="background:var(--amber-400)"></div>
+              <div>
+                <div class="duration-label">Recorded Payout</div>
+                <div class="duration-note">${ch.useDetailedAmount ? 'Coins plus cash' : 'Manual total amount'}</div>
               </div>
             </div>
-          `).join('')}
+            <div class="duration-val" style="background:linear-gradient(135deg,var(--amber-400),#f97316);-webkit-background-clip:text">${money(chumpTotal)}</div>
+          </div>
         </div>
-        ${ch.nominations.length > 1 ? `
-          <div class="form-group">
-            <label class="form-label">Crown the Chump <span class="optional">(Optional)</span></label>
-            <select class="form-input" onchange="updateChump('winner',this.value)">
-              <option value="">Select winner…</option>
-              ${ch.nominations.map((n,i)=>`<option value="${i}" ${ch.winner==i?'selected':''}>${n.label||'Nomination '+(i+1)}</option>`).join('')}
-            </select>
+
+        <div class="field-section ${played ? '' : 'muted'}">
+          <div class="field-section-hdr">
+            <div>
+              <div class="field-section-title">Players</div>
+              <div class="field-section-sub">Capture how many closers played and who was in the game for odds tracking later.</div>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label-sm">People Played</label>
+              <input type="number" class="form-input" value="${ch.playerCount ?? ''}" oninput="updateChumpNumber('playerCount', this.value, false)" onblur="commitFormInput()" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label-sm">Winner</label>
+              <select class="form-input" onchange="updateChump('winnerName', this.value)">
+                <option value="">Unknown / not logged</option>
+                ${playerNames.map(name => `<option value="${name}" ${ch.winnerName === name ? 'selected' : ''}>${name}</option>`).join('')}
+                ${ch.winnerName && !playerNames.includes(ch.winnerName) ? `<option value="${ch.winnerName}" selected>${ch.winnerName}</option>` : ''}
+              </select>
+            </div>
+          </div>
+          ${teamChoices.length ? `
+            <div style="margin-top:12px;">
+              <label class="form-label-sm" style="display:block;margin-bottom:8px;">Select from Team</label>
+              <div class="chip-grid">
+                ${teamChoices.map((m, i) => `<button type="button" class="select-chip ${chumpPlayers.includes(m.name) ? 'active' : ''}" onclick="toggleChumpPlayer('${m.name}')">${personChip(m.name, i, true)} ${m.name}</button>`).join('')}
+              </div>
+            </div>` : `
+            <div class="dash-note" style="margin-top:12px;">Add bartenders in Team to select players here.</div>`}
+          <div class="form-group" style="margin-top:12px;max-width:420px;">
+            <label class="form-label-sm">Add Player Manually</label>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:8px;">
+              <input type="text" class="form-input" id="chump-player-input" list="chump-player-options" onkeydown="chumpPlayerInputKeydown(event)" placeholder="">
+              <button class="btn btn-secondary" type="button" onclick="addChumpPlayer(document.getElementById('chump-player-input')?.value)">Add</button>
+            </div>
+            <datalist id="chump-player-options">
+              ${[...new Set([...employeeNames, ...teamChoices.map(m => m.name)])].map(name => `<option value="${name}"></option>`).join('')}
+            </datalist>
+          </div>
+        </div>
+
+        <div class="field-section ${played ? '' : 'muted'}">
+          <div class="field-section-hdr">
+            <div>
+              <div class="field-section-title">Notes</div>
+              <div class="field-section-sub">Optional context about odd payouts, extra dollars, or who flipped.</div>
+            </div>
+          </div>
+          <textarea class="form-input" rows="2" placeholder="" oninput="updateChump('notes',this.value, false)" onblur="commitFormInput()" style="resize:vertical;">${ch.notes||''}</textarea>
+        </div>
+
+        ${!played ? `
+          <div class="field-section muted">
+            <div class="field-section-title">Not applicable</div>
+            <div class="field-section-sub">Turn on Chump game played to reveal result, payout, players, and winner fields.</div>
           </div>` : ''}
-        <div class="form-group">
-          <label class="form-label">Staff Notes <span class="optional">(Optional)</span></label>
-          <textarea class="form-input" rows="2" placeholder="Anything management should know…" oninput="updateChump('notes',this.value)" style="resize:vertical;">${ch.notes||''}</textarea>
-        </div>
       </div>
       <div class="form-nav" style="margin-top:8px;">
         <button class="btn btn-secondary" onclick="prevSection()">${svg('chevL')} Previous</button>
-        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Notes ${svg('chevR')}</button>
+        <button class="btn btn-primary" style="flex:1" onclick="nextSection()">Next: Team ${svg('chevR')}</button>
       </div>
     </div>`;
   }
@@ -1401,13 +2106,12 @@ function renderSection(dur, wageEarnings, wageDur) {
     <div class="animate-in">
       <div class="section-header">
         <div>
-          <div class="section-row"><h2 class="section-title">Notes</h2><span class="badge badge-blue">Optional</span></div>
-          <div class="section-sub">Anything else worth remembering about tonight</div>
+          <div class="section-row"><h2 class="section-title">Notes</h2>${sectionStatus('notes')}</div>
         </div>
       </div>
       <div class="card form-card">
         <div class="form-group">
-          <label class="form-label">How did you feel? <span class="optional">(Optional)</span></label>
+          <label class="form-label">How did you feel?</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             ${moods.map(([em,lbl],i)=>`
               <button onclick="updateNotes('mood',${i})" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;border-radius:var(--radius-lg);font-size:0.7rem;font-weight:600;cursor:pointer;border:1px solid ${no.mood===i?'rgba(139,92,246,.6)':'var(--border)'};background:${no.mood===i?'rgba(139,92,246,.12)':'rgba(10,15,26,.5)'};color:${no.mood===i?'var(--purple-400)':'var(--gray-500)'};transition:all 0.15s;">
@@ -1417,7 +2121,7 @@ function renderSection(dur, wageEarnings, wageDur) {
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Tags <span class="optional">(Optional)</span></label>
+          <label class="form-label">Tags</label>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             ${tagOptions.map(t=>`
               <button onclick="toggleTag('${t}')" style="padding:5px 10px;border-radius:999px;font-size:0.72rem;font-weight:500;cursor:pointer;border:1px solid ${no.tags.includes(t)?'rgba(96,165,250,.6)':'var(--border)'};background:${no.tags.includes(t)?'rgba(96,165,250,.12)':'rgba(10,15,26,.5)'};color:${no.tags.includes(t)?'var(--blue-300)':'var(--gray-500)'};transition:all 0.15s;">${t}</button>
@@ -1425,8 +2129,8 @@ function renderSection(dur, wageEarnings, wageDur) {
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Free Notes <span class="optional">(Optional)</span></label>
-          <textarea class="form-input" rows="4" placeholder="Anything worth remembering…" oninput="updateNotes('text',this.value)" style="resize:vertical;">${no.text||''}</textarea>
+          <label class="form-label">Free Notes</label>
+          <textarea class="form-input" rows="4" placeholder="" oninput="updateNotes('text',this.value, false)" onblur="commitFormInput()" style="resize:vertical;">${no.text||''}</textarea>
           <div style="font-size:0.7rem;color:var(--gray-600);text-align:right;margin-top:2px;">${(no.text||'').length} chars</div>
         </div>
       </div>
@@ -1453,6 +2157,107 @@ function activateTimeField(id) {
   inp.select();
 }
 
+function focusTimeFieldAfterRender(id) {
+  requestAnimationFrame(() => activateTimeField(id));
+}
+
+function focusFieldAfterRender(id) {
+  requestAnimationFrame(() => {
+    if (document.getElementById('disp-' + id) && document.getElementById('input-' + id)) {
+      activateTimeField(id);
+      return;
+    }
+    if (id.startsWith('team-location-')) {
+      const row = parseInt(id.replace('team-location-', ''), 10);
+      activateTeamLocation(row);
+      return;
+    }
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.focus();
+    if (typeof el.select === 'function') el.select();
+  });
+}
+
+function getTimeFieldOrder() {
+  if (state.activeSection === 'times') {
+    return [
+      'start',
+      'end',
+      ...state.formData.shift.times.breaks.flatMap((_, i) => [`brk-start-${i}`, `brk-end-${i}`])
+    ];
+  }
+  if (state.activeSection === 'wage') return ['wage-start', 'wage-end'];
+  if (state.activeSection === 'events') {
+    return state.formData.shift.events.items.map((_, i) => `evt-${i}`);
+  }
+  if (state.activeSection === 'team') {
+    return state.formData.shift.team.members.flatMap((_, i) => [`team-start-${i}`, `team-end-${i}`]);
+  }
+  return [];
+}
+
+function getTeamFieldOrder() {
+  return state.formData.shift.team.members.flatMap((_, i) => [
+    `team-name-${i}`,
+    `team-start-${i}`,
+    `team-end-${i}`,
+    `team-location-${i}`
+  ]);
+}
+
+function getTimeFieldValue(id) {
+  if (id === 'start') return state.formData.shift.times.start;
+  if (id === 'end') return state.formData.shift.times.end;
+  if (id === 'wage-start') return state.formData.shift.wage.startTime;
+  if (id === 'wage-end') return state.formData.shift.wage.endTime;
+  if (id.startsWith('brk-start-')) {
+    const i = parseInt(id.replace('brk-start-', ''), 10);
+    return state.formData.shift.times.breaks[i]?.start || null;
+  }
+  if (id.startsWith('brk-end-')) {
+    const i = parseInt(id.replace('brk-end-', ''), 10);
+    return state.formData.shift.times.breaks[i]?.end || null;
+  }
+  if (id.startsWith('evt-')) {
+    const i = parseInt(id.replace('evt-', ''), 10);
+    return state.formData.shift.events.items[i]?.time || null;
+  }
+  if (id.startsWith('team-start-')) {
+    const i = parseInt(id.replace('team-start-', ''), 10);
+    return state.formData.shift.team.members[i]?.startTime || null;
+  }
+  if (id.startsWith('team-end-')) {
+    const i = parseInt(id.replace('team-end-', ''), 10);
+    return state.formData.shift.team.members[i]?.endTime || null;
+  }
+  return null;
+}
+
+function setTimeFieldValue(id, value24) {
+  if (id === 'start') state.formData.shift.times.start = value24;
+  else if (id === 'end') state.formData.shift.times.end = value24;
+  else if (id === 'wage-start') state.formData.shift.wage.startTime = value24;
+  else if (id === 'wage-end') state.formData.shift.wage.endTime = value24;
+  else if (id.startsWith('brk-start-')) { const i = parseInt(id.replace('brk-start-', ''), 10); state.formData.shift.times.breaks[i].start = value24; }
+  else if (id.startsWith('brk-end-')) { const i = parseInt(id.replace('brk-end-', ''), 10); state.formData.shift.times.breaks[i].end = value24; }
+  else if (id.startsWith('evt-')) { const i = parseInt(id.replace('evt-', ''), 10); state.formData.shift.events.items[i].time = value24; }
+  else if (id.startsWith('team-start-')) { const i = parseInt(id.replace('team-start-', ''), 10); state.formData.shift.team.members[i].startTime = value24; }
+  else if (id.startsWith('team-end-')) { const i = parseInt(id.replace('team-end-', ''), 10); state.formData.shift.team.members[i].endTime = value24; }
+}
+
+function closeTimeField(id) {
+  const disp = document.getElementById('disp-' + id);
+  const inp = document.getElementById('input-' + id);
+  const hint = document.getElementById('hint-' + id);
+  if (inp) inp.classList.remove('active');
+  if (disp) disp.classList.remove('hidden');
+  if (hint) {
+    hint.className = 'time-parse-hint dim';
+    hint.textContent = '';
+  }
+}
+
 function livePreviewTime(id, isEnd) {
   const inp = document.getElementById('input-' + id);
   const hint = document.getElementById('hint-' + id);
@@ -1460,15 +2265,12 @@ function livePreviewTime(id, isEnd) {
   const raw = inp.value;
   if (!raw.trim()) {
     hint.className = 'time-parse-hint dim';
-    hint.textContent = 'Type shorthand: 5 → 5:00 PM, 9 → 9:00 AM, 1730 → 5:30 PM';
+    hint.textContent = '';
     return;
   }
   let preview;
   if (isEnd === true || isEnd === 'true') {
-    const startH24 = state.formData.shift.times.start
-      ? parseInt(state.formData.shift.times.start.split(':')[0])
-      : null;
-    preview = previewTimeInput(raw, startH24);
+    preview = previewTimeInput(raw, getTimeContextStartHour(id));
   } else {
     preview = previewTimeInput(raw, undefined);
   }
@@ -1491,29 +2293,42 @@ function commitTimeField(id, fieldType) {
   let value24 = null;
   if (raw) {
     if (fieldType === 'end') {
-      const startH24 = state.formData.shift.times.start
-        ? parseInt(state.formData.shift.times.start.split(':')[0])
-        : null;
-      const parsed = parseEndTimeWithContext(raw, startH24);
+      const parsed = parseEndTimeWithContext(raw, getTimeContextStartHour(id));
       value24 = formatTime24(parsed);
     } else {
       const parsed = parseTimeInput(raw);
       value24 = formatTime24(parsed);
     }
   }
-  if (id === 'start') state.formData.shift.times.start = value24;
-  else if (id === 'end') state.formData.shift.times.end = value24;
-  else if (id === 'wage-start') state.formData.shift.wage.startTime = value24;
-  else if (id === 'wage-end') state.formData.shift.wage.endTime = value24;
-  else if (id.startsWith('brk-start-')) { const i = parseInt(id.replace('brk-start-', '')); state.formData.shift.times.breaks[i].start = value24; }
-  else if (id.startsWith('brk-end-')) { const i = parseInt(id.replace('brk-end-', '')); state.formData.shift.times.breaks[i].end = value24; }
-  else if (id.startsWith('evt-')) { const i = parseInt(id.replace('evt-', '')); state.formData.shift.events.items[i].time = value24; }
-  render();
+  if (value24 === getTimeFieldValue(id)) {
+    closeTimeField(id);
+    return;
+  }
+  setTimeFieldValue(id, value24);
+  render({ suppressAnimation: true });
 }
 
 function timeFieldKeydown(e, id, fieldType) {
   if (e.key === 'Enter') { e.preventDefault(); commitTimeField(id, fieldType); }
   if (e.key === 'Escape') { e.preventDefault(); render(); }
+  if (e.key === 'Tab') {
+    const order = state.activeSection === 'team' ? getTeamFieldOrder() : getTimeFieldOrder();
+    const currentIndex = order.indexOf(id);
+    const nextIndex = currentIndex + (e.shiftKey ? -1 : 1);
+    const nextId = order[nextIndex];
+    if (nextId) {
+      e.preventDefault();
+      commitTimeField(id, fieldType);
+      focusFieldAfterRender(nextId);
+    } else if (state.activeSection === 'team' && !e.shiftKey && id.startsWith('team-end-')) {
+      e.preventDefault();
+      commitTimeField(id, fieldType);
+      const i = parseInt(id.replace('team-end-', ''), 10);
+      addTeamMember(false);
+      render({ suppressAnimation: true });
+      focusFieldAfterRender(`team-name-${i + 1}`);
+    }
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -1536,7 +2351,7 @@ function livePreviewDate() {
   const raw = inp.value;
   if (!raw.trim()) {
     hint.className = 'date-parse-hint dim';
-    hint.textContent = 'Type a date or use the picker →';
+    hint.textContent = '';
     return;
   }
   const preview = previewDateInput(raw);
@@ -1569,7 +2384,9 @@ function dateFieldKeydown(e) {
 
 function openDatePicker() {
   const picker = document.getElementById('native-date-picker');
-  if (picker) picker.click();
+  if (!picker) return;
+  if (typeof picker.showPicker === 'function') picker.showPicker();
+  else picker.click();
 }
 
 function nativeDatePicked(val) {
@@ -1583,36 +2400,509 @@ function nativeDatePicked(val) {
 // ─────────────────────────────────────────────
 //  EVENT HANDLERS
 // ─────────────────────────────────────────────
-function setSection(id) { state.activeSection = id; render(); }
+function setSection(id) {
+  if (state.activeSection === 'team' && id !== 'team') pruneEmptyTeamMembers();
+  state.activeSection = id;
+  state.navFocusIndex = Math.max(0, navOrder.indexOf(id));
+  state.focusedGroupIndex = 0;
+  state.navFocused = false;
+  render();
+}
 function nextSection() { const i = sectionOrder.indexOf(state.activeSection); if (i < sectionOrder.length - 1) setSection(sectionOrder[i+1]); }
-function prevSection() { const i = sectionOrder.indexOf(state.activeSection); if (i > 0) setSection(sectionOrder[i-1]); }
+function prevSection() { const i = sectionOrder.indexOf(state.activeSection); if (i > 0) setSection(sectionOrder[i-1]); else setSection('home'); }
+
+function focusNavPanel() {
+  state.navFocused = true;
+  if (state.navFocusIndex < 0) state.navFocusIndex = Math.max(0, navOrder.indexOf(state.activeSection));
+  render({ suppressAnimation: true });
+}
+
+function moveNavFocus(delta) {
+  state.navFocused = true;
+  state.navFocusIndex = (state.navFocusIndex + delta + navOrder.length) % navOrder.length;
+  render({ suppressAnimation: true });
+}
+
+function openFocusedNav() {
+  setSection(navOrder[state.navFocusIndex] || 'home');
+}
+
+function isFieldTarget(target) {
+  return !!target?.matches?.('input, textarea, select, [contenteditable="true"]');
+}
+
+function focusFirstSectionInput() {
+  const main = document.querySelector('.main');
+  const target = main?.querySelector('.smart-date-display, .smart-time-display, input.form-input, textarea.form-input, select.form-input, .location-display');
+  if (!target) return;
+  if (target.classList.contains('smart-date-display')) activateDateField();
+  else if (target.classList.contains('smart-time-display')) activateTimeField(target.id.replace('disp-', ''));
+  else if (target.classList.contains('location-display')) {
+    const id = target.closest('[id^="disp-team-location-"]')?.id;
+    if (id) activateTeamLocation(parseInt(id.replace('disp-team-location-', ''), 10));
+  } else {
+    target.focus();
+    if (typeof target.select === 'function') target.select();
+  }
+}
+
+function formGroups() {
+  return [...document.querySelectorAll('.main .form-card > div')]
+    .filter(group => !group.classList.contains('duration-bar') && !group.classList.contains('muted'))
+    .filter(group => group.querySelector('input, textarea, select, button, .smart-time-display, .smart-date-display, .location-display'));
+}
+
+const fieldSelector = '.smart-date-display:not(.hidden), .smart-time-display:not(.hidden), input.form-input:not([type="hidden"]), textarea.form-input, select.form-input, .location-display, button:not(.btn-danger):not(.btn-link):not(.tool-chip)';
+
+function applyFocusedGroupClass() {
+  const groups = formGroups();
+  groups.forEach((group, index) => {
+    group.classList.toggle('group-focused', index === state.focusedGroupIndex && state.activeSection !== 'home');
+    group.tabIndex = 0;
+  });
+}
+
+function setFocusedGroup(index, { edit = false, scroll = true } = {}) {
+  const groups = formGroups();
+  if (!groups.length) return;
+  state.focusedGroupIndex = (index + groups.length) % groups.length;
+  applyFocusedGroupClass();
+  const group = groups[state.focusedGroupIndex];
+  if (scroll) group.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if (edit) focusControlInGroup(group);
+  else group.focus({ preventScroll: true });
+}
+
+function currentGroup() {
+  const groups = formGroups();
+  const activeGroup = document.activeElement?.closest?.('.main .form-card > div');
+  if (activeGroup && groups.includes(activeGroup)) {
+    state.focusedGroupIndex = groups.indexOf(activeGroup);
+    applyFocusedGroupClass();
+    return activeGroup;
+  }
+  return groups[state.focusedGroupIndex] || groups[0] || null;
+}
+
+function focusControlInGroup(group) {
+  const target = group?.querySelector(fieldSelector);
+  if (!target) return;
+  if (target.classList.contains('smart-date-display')) activateDateField();
+  else if (target.classList.contains('smart-time-display')) activateTimeField(target.id.replace('disp-', ''));
+  else if (target.classList.contains('location-display')) {
+    const id = target.closest('[id^="disp-team-location-"]')?.id;
+    if (id) activateTeamLocation(parseInt(id.replace('disp-team-location-', ''), 10));
+  } else {
+    target.focus();
+    if (typeof target.select === 'function' && target.matches('input, textarea')) target.select();
+  }
+}
+
+function focusNextGroup(delta = 1) {
+  const groups = formGroups();
+  if (!groups.length) return;
+  const activeGroup = document.activeElement?.closest?.('.main .form-card > div');
+  let index = groups.indexOf(activeGroup);
+  if (index === -1) index = state.focusedGroupIndex ?? (delta > 0 ? -1 : 0);
+  setFocusedGroup(index + delta, { edit: false });
+}
+
+function commitActiveFieldSilently() {
+  const active = document.activeElement;
+  if (!active) return;
+  if (active.classList?.contains('smart-time-input')) {
+    const id = active.id.replace('input-', '');
+    const raw = active.value.trim();
+    let value24 = null;
+    if (raw) {
+      const parsed = id.includes('end') ? parseEndTimeWithContext(raw, getTimeContextStartHour(id)) : parseTimeInput(raw);
+      value24 = formatTime24(parsed);
+    }
+    setTimeFieldValue(id, value24);
+    closeTimeField(id);
+    return;
+  }
+  if (active.classList?.contains('smart-date-input')) {
+    const raw = active.value.trim();
+    if (raw) {
+      const d = parseDateInput(raw);
+      if (d) {
+        state.formData.shift.date = dateToISO(d);
+        state.seededDate = false;
+      }
+    }
+    active.classList.remove('active');
+    document.getElementById('disp-date')?.classList.remove('hidden');
+    return;
+  }
+}
+
+function fieldsInScope() {
+  return [...document.querySelectorAll('.main ' + fieldSelector)]
+    .filter(el => !el.disabled && !el.closest('.muted'))
+    .filter(el => !el.classList.contains('hidden') && el.style.display !== 'none');
+}
+
+function focusElement(el) {
+  if (!el) return;
+  const group = el.closest('.main .form-card > div');
+  if (group) {
+    const groups = formGroups();
+    const index = groups.indexOf(group);
+    if (index !== -1) state.focusedGroupIndex = index;
+    applyFocusedGroupClass();
+  }
+  if (el.classList.contains('smart-date-display')) activateDateField();
+  else if (el.classList.contains('smart-time-display')) activateTimeField(el.id.replace('disp-', ''));
+  else if (el.classList.contains('location-display')) {
+    const id = el.closest('[id^="disp-team-location-"]')?.id;
+    if (id) activateTeamLocation(parseInt(id.replace('disp-team-location-', ''), 10));
+  } else {
+    el.focus();
+    if (typeof el.select === 'function' && el.matches('input, textarea')) el.select();
+  }
+}
+
+function focusNextField(delta = 1) {
+  commitActiveFieldSilently();
+  const fields = fieldsInScope();
+  if (!fields.length) return;
+  const active = document.activeElement;
+  let index = fields.indexOf(active);
+  if (index === -1 && active?.classList?.contains('smart-time-input')) {
+    index = fields.findIndex(field => field.id === 'disp-' + active.id.replace('input-', ''));
+  }
+  if (index === -1 && active?.classList?.contains('smart-date-input')) {
+    index = fields.findIndex(field => field.id === 'disp-date');
+  }
+  if (index === -1) {
+    const group = currentGroup();
+    const groupFields = fields.filter(field => group?.contains(field));
+    if (groupFields.length) {
+      focusElement(delta > 0 ? groupFields[0] : groupFields[groupFields.length - 1]);
+      return;
+    }
+    index = delta > 0 ? -1 : 0;
+  }
+  focusElement(fields[(index + delta + fields.length) % fields.length]);
+}
+
+function editFocusedGroup() {
+  focusControlInGroup(currentGroup());
+}
+
+function handleGlobalShortcut(e) {
+  if (e.altKey && e.shiftKey && e.key === 'ArrowRight') { e.preventDefault(); nextSection(); return; }
+  if (e.altKey && e.shiftKey && e.key === 'ArrowLeft') { e.preventDefault(); prevSection(); return; }
+  if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); focusNextField(1); return; }
+  if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); focusNextField(-1); return; }
+  if (e.altKey && e.key === 'ArrowDown') { e.preventDefault(); focusNextGroup(1); return; }
+  if (e.altKey && e.key === 'ArrowUp') { e.preventDefault(); focusNextGroup(-1); return; }
+  if (e.altKey && e.key === 'Enter') { e.preventDefault(); focusNextField(1); return; }
+  if (e.altKey && e.key === ' ') { e.preventDefault(); editFocusedGroup(); return; }
+  if (isFieldTarget(e.target)) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      const group = e.target.closest('.main .form-card > div');
+      e.target.blur();
+      const groups = formGroups();
+      const index = groups.indexOf(group);
+      if (index !== -1) setFocusedGroup(index, { edit: false, scroll: false });
+    }
+    return;
+  }
+  const key = e.key.toLowerCase();
+  if (key === 'l') { e.preventDefault(); focusNavPanel(); return; }
+  if (key === 'g') { e.preventDefault(); focusNextGroup(e.shiftKey ? -1 : 1); return; }
+  if (key === 'n') { e.preventDefault(); nextSection(); return; }
+  if (key === 'p') { e.preventDefault(); prevSection(); return; }
+  if (key === 'escape') { e.preventDefault(); setSection('home'); return; }
+  if (key === 'arrowdown') { e.preventDefault(); moveNavFocus(1); return; }
+  if (key === 'arrowup') { e.preventDefault(); moveNavFocus(-1); return; }
+  if (key === 'enter') {
+    e.preventDefault();
+    if (state.navFocused) openFocusedNav();
+    else if (state.activeSection !== 'home') editFocusedGroup();
+    else focusNavPanel();
+    return;
+  }
+  if (key === ' ') {
+    e.preventDefault();
+    if (state.activeSection === 'home') focusNavPanel();
+    else editFocusedGroup();
+    return;
+  }
+  if (/^[1-9]$/.test(key)) {
+    e.preventDefault();
+    setSection(sectionOrder[Number(key) - 1]);
+    return;
+  }
+  if (sectionShortcuts[key]) {
+    e.preventDefault();
+    setSection(sectionShortcuts[key]);
+  }
+}
+
+function pageDelta(delta) {
+  if (delta > 0) nextSection();
+  else prevSection();
+}
 
 function addBreak() { state.formData.shift.times.breaks.push({ start: null, end: null }); render(); }
 function removeBreak(i) { state.formData.shift.times.breaks.splice(i, 1); render(); }
 
-function updateTips(val) { const v = val.trim() === '' ? null : parseFloat(val); state.formData.shift.tips.amount = isNaN(v) ? null : v; render(); }
+function updateTips(val, shouldRender = true) { const v = val.trim() === '' ? null : parseFloat(val); state.formData.shift.tips.amount = isNaN(v) ? null : v; if (shouldRender) render(); }
 function addPool() { state.formData.shift.tips.pools.push({ name:'', amount:0 }); render(); }
 function removePool(i) { state.formData.shift.tips.pools.splice(i, 1); render(); }
-function updatePool(i, field, val) { state.formData.shift.tips.pools[i][field] = val; render(); }
+function updatePool(i, field, val, shouldRender = true) { state.formData.shift.tips.pools[i][field] = val; if (shouldRender) render(); }
 
-function updateWageRate(val) { state.formData.shift.wage.hourlyRate = val; render(); }
+function updateWageRate(val, shouldRender = true) { state.formData.shift.wage.hourlyRate = val; if (shouldRender) render(); }
 
-function addTeamMember() { state.formData.shift.team.members.push({ name:'', role:'' }); render(); }
-function removeTeamMember(i) { state.formData.shift.team.members.splice(i, 1); render(); }
-function updateTeamMember(i, field, val) { state.formData.shift.team.members[i][field] = val; render(); }
-function updateTeam(field, val) { state.formData.shift.team[field] = val; if (!state.completedSections.includes('team')) state.completedSections.push('team'); render(); }
+function markOtherLogged() {
+  if (!state.completedSections.includes('other')) state.completedSections.push('other');
+}
+
+function addOtherEarning(type = 'Cash') {
+  state.formData.shift.other.entries.push({ type, amount: null, note: '' });
+  markOtherLogged();
+  render({ suppressAnimation: true });
+}
+
+function removeOtherEarning(i) {
+  state.formData.shift.other.entries.splice(i, 1);
+  render({ suppressAnimation: true });
+}
+
+function updateOtherEarning(i, field, value, shouldRender = true) {
+  if (!state.formData.shift.other.entries[i]) return;
+  state.formData.shift.other.entries[i][field] = value;
+  markOtherLogged();
+  if (shouldRender) render({ suppressAnimation: true });
+}
+
+function updateOtherEarningNumber(i, raw, shouldRender = true) {
+  const trimmed = String(raw).trim();
+  const value = trimmed === '' ? null : Number(trimmed);
+  updateOtherEarning(i, 'amount', Number.isNaN(value) ? null : value, shouldRender);
+}
+
+function makeTeamMember({ isUser = false } = {}) {
+  return {
+    name: isUser ? currentUserName : '',
+    startTime: isUser ? state.formData.shift.times.start : null,
+    endTime: isUser ? state.formData.shift.times.end : null,
+    location: null,
+    isUser
+  };
+}
+
+function ensureTeamInitialized() {
+  const team = state.formData.shift.team;
+  if (team.initialized) return;
+  team.members.unshift(makeTeamMember({ isUser: true }));
+  team.initialized = true;
+}
+
+function addTeamMember(shouldRender = true) {
+  state.formData.shift.team.members.push(makeTeamMember());
+  if (!state.completedSections.includes('team')) state.completedSections.push('team');
+  if (shouldRender) render();
+}
+function removeTeamMember(i) {
+  if (state.formData.shift.team.members[i]?.isUser) return;
+  state.formData.shift.team.members.splice(i, 1);
+  render();
+}
+function updateTeamMember(i, field, val, shouldRender = true) {
+  state.formData.shift.team.members[i][field] = val;
+  if (!state.completedSections.includes('team')) state.completedSections.push('team');
+  if (shouldRender) render();
+}
+function updateTeam(field, val, shouldRender = true) { state.formData.shift.team[field] = val; if (!state.completedSections.includes('team')) state.completedSections.push('team'); if (shouldRender) render(); }
+
+function setTeamLocation(i, location, shouldRender = true) {
+  state.formData.shift.team.members[i].location = location;
+  if (!state.completedSections.includes('team')) state.completedSections.push('team');
+  if (shouldRender) render({ suppressAnimation: true });
+}
+
+function updateTeamLocationInput(i, raw) {
+  const location = locationFromInput(raw);
+  state.formData.shift.team.members[i].location = location;
+  const inp = document.getElementById(`team-location-${i}`);
+  if (inp) {
+    inp.value = location || raw.toUpperCase().slice(0, 1);
+    inp.className = `form-input location-input ${location ? 'location-' + location.toLowerCase() : ''}`;
+  }
+  if (!state.completedSections.includes('team')) state.completedSections.push('team');
+}
+
+function activateTeamLocation(i) {
+  const disp = document.getElementById(`disp-team-location-${i}`);
+  const inp = document.getElementById(`team-location-${i}`);
+  if (!disp || !inp) return;
+  disp.style.display = 'none';
+  inp.style.display = 'block';
+  inp.focus();
+  inp.select();
+}
+
+function commitTeamLocation(i) {
+  const inp = document.getElementById(`team-location-${i}`);
+  const disp = document.getElementById(`disp-team-location-${i}`);
+  if (inp) inp.style.display = 'none';
+  if (disp) disp.style.display = 'block';
+  commitFormInput();
+}
+
+function renderTeamNameSuggestions(i) {
+  const input = document.getElementById(`team-name-${i}`);
+  if (!input || document.activeElement !== input) return;
+  const wrap = input.closest('.team-name-wrap');
+  if (!wrap) return;
+  const old = wrap.querySelector('.team-suggest-menu');
+  if (old) old.remove();
+  const member = state.formData.shift.team.members[i];
+  if (member?.isUser) return;
+  const matches = teamNameMatches(input.value);
+  if (!matches.length) return;
+  const menu = document.createElement('div');
+  menu.className = 'team-suggest-menu';
+  menu.id = `team-name-menu-${i}`;
+  menu.innerHTML = matches.map((name, idx) => `<button type="button" class="team-suggest-item ${idx === 0 ? 'active' : ''}" onclick="acceptTeamName(${i}, '${name}')">${personChip(name, idx, true)}<span>${name}</span></button>`).join('');
+  wrap.appendChild(menu);
+}
+
+function acceptTeamName(i, name) {
+  state.formData.shift.team.members[i].name = name;
+  render({ suppressAnimation: true });
+  focusFieldAfterRender(`team-start-${i}`);
+}
+
+function commitTeamName(i) {
+  setTimeout(() => {
+    const menu = document.getElementById(`team-name-menu-${i}`);
+    if (menu) menu.remove();
+  }, 120);
+}
+
+function isEmptyTeamMember(member) {
+  if (!member || member.isUser) return false;
+  return !member.name && !member.startTime && !member.endTime && !member.location;
+}
+
+function pruneEmptyTeamMembers() {
+  state.formData.shift.team.members = state.formData.shift.team.members.filter(member => !isEmptyTeamMember(member));
+}
+
+function teamCellKeydown(e, rowIndex, field) {
+  if ((e.key === 'Enter' || e.key === 'Tab') && field === 'name') {
+    const matches = teamNameMatches(state.formData.shift.team.members[rowIndex]?.name);
+    if (matches.length && !state.formData.shift.team.members[rowIndex]?.isUser) {
+      e.preventDefault();
+      state.formData.shift.team.members[rowIndex].name = matches[0];
+      render({ suppressAnimation: true });
+      focusFieldAfterRender(e.key === 'Enter' ? `team-name-${rowIndex}` : `team-start-${rowIndex}`);
+      return;
+    }
+  }
+  if (e.key !== 'Tab') return;
+  const order = getTeamFieldOrder();
+  const id = field === 'location' ? `team-location-${rowIndex}` : `team-${field}-${rowIndex}`;
+  const currentIndex = order.indexOf(id);
+  const nextId = order[currentIndex + (e.shiftKey ? -1 : 1)];
+  if (nextId) {
+    e.preventDefault();
+    commitFormInput();
+    focusFieldAfterRender(nextId);
+    return;
+  }
+  if (!e.shiftKey && field === 'location') {
+    e.preventDefault();
+    addTeamMember(false);
+    render({ suppressAnimation: true });
+    focusFieldAfterRender(`team-name-${rowIndex + 1}`);
+  }
+}
 
 function updateEvents(field, val) { state.formData.shift.events[field] = val; if (!state.completedSections.includes('events')) state.completedSections.push('events'); render(); }
 function addEvent() { state.formData.shift.events.items.push({ time: null, desc:'' }); render(); }
 function removeEvent(i) { state.formData.shift.events.items.splice(i, 1); render(); }
-function updateEvent(i, field, val) { state.formData.shift.events.items[i][field] = val; render(); }
+function updateEvent(i, field, val, shouldRender = true) { state.formData.shift.events.items[i][field] = val; if (shouldRender) render(); }
 
-function updateChump(field, val) { state.formData.shift.chump[field] = val; render(); }
-function addNomination() { state.formData.shift.chump.nominations.push({ label:'', reason:'', severity:0 }); render(); }
-function removeNomination(i) { state.formData.shift.chump.nominations.splice(i, 1); render(); }
-function updateNomination(i, field, val) { state.formData.shift.chump.nominations[i][field] = val; render(); }
+function markChumpLogged() {
+  if (!state.completedSections.includes('chump')) state.completedSections.push('chump');
+}
 
-function updateNotes(field, val) { state.formData.shift.notes[field] = val; if (!state.completedSections.includes('notes')) state.completedSections.push('notes'); render(); }
+function toggleChumpPlayed() {
+  const ch = state.formData.shift.chump;
+  ch.played = ch.played === true ? false : true;
+  markChumpLogged();
+  render();
+}
+
+function updateChump(field, val, shouldRender = true) {
+  state.formData.shift.chump[field] = val;
+  if (field !== 'played' && state.formData.shift.chump.played === null) state.formData.shift.chump.played = true;
+  markChumpLogged();
+  if (shouldRender) render();
+}
+
+function updateChumpNumber(field, raw, shouldRender = true) {
+  const trimmed = String(raw).trim();
+  let value = trimmed === '' ? null : Number(trimmed);
+  if (Number.isNaN(value)) value = null;
+  if (field === 'playerCount' && value !== null) value = Math.max(0, Math.round(value));
+  updateChump(field, value, shouldRender);
+}
+
+function toggleChumpPlayer(name) {
+  const ch = state.formData.shift.chump;
+  if (!ch.players) ch.players = [];
+  const idx = ch.players.indexOf(name);
+  if (idx === -1) ch.players.push(name);
+  else ch.players.splice(idx, 1);
+  if (ch.playerCount === null || ch.playerCount < ch.players.length) ch.playerCount = ch.players.length;
+  if (ch.played === null) ch.played = true;
+  markChumpLogged();
+  render({ suppressAnimation: true });
+}
+
+function addChumpPlayer(name) {
+  const clean = (name || '').trim();
+  if (!clean) return;
+  const ch = state.formData.shift.chump;
+  if (!ch.players) ch.players = [];
+  if (!ch.players.includes(clean)) ch.players.push(clean);
+  if (ch.playerCount === null || ch.playerCount < ch.players.length) ch.playerCount = ch.players.length;
+  if (ch.played === null) ch.played = true;
+  markChumpLogged();
+  render({ suppressAnimation: true });
+}
+
+function chumpPlayerInputKeydown(e) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  addChumpPlayer(e.target.value);
+}
+
+function addNomination() {
+  if (!state.formData.shift.chump.nominations) state.formData.shift.chump.nominations = [];
+  state.formData.shift.chump.nominations.push({ label:'', reason:'', severity:0 });
+  render();
+}
+function removeNomination(i) {
+  if (!state.formData.shift.chump.nominations) return;
+  state.formData.shift.chump.nominations.splice(i, 1);
+  render();
+}
+function updateNomination(i, field, val, shouldRender = true) {
+  if (!state.formData.shift.chump.nominations?.[i]) return;
+  state.formData.shift.chump.nominations[i][field] = val;
+  if (shouldRender) render();
+}
+
+function updateNotes(field, val, shouldRender = true) { state.formData.shift.notes[field] = val; if (!state.completedSections.includes('notes')) state.completedSections.push('notes'); if (shouldRender) render(); }
 function toggleTag(tag) {
   const tags = state.formData.shift.notes.tags;
   const idx = tags.indexOf(tag);
@@ -1626,12 +2916,45 @@ function applyPattern() {
   render();
 }
 
+function commitFormInput() {
+  render({ suppressAnimation: true });
+}
+
 function handleSave() {
   alert('Shift saved!\n\n' + JSON.stringify(state.formData, null, 2).substring(0, 400) + '...');
 }
 
 document.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); handleSave(); }
+  else handleGlobalShortcut(e);
+});
+
+document.addEventListener('focusin', e => {
+  const group = e.target.closest?.('.main .form-card > div');
+  if (group) {
+    const groups = formGroups();
+    const index = groups.indexOf(group);
+    if (index !== -1) {
+      state.focusedGroupIndex = index;
+      applyFocusedGroupClass();
+    }
+  }
+  if (e.target.matches('input.form-input, textarea.form-input, .smart-time-input, .smart-date-input')) {
+    requestAnimationFrame(() => {
+      if (typeof e.target.select === 'function') e.target.select();
+    });
+  }
+});
+
+document.addEventListener('click', e => {
+  const group = e.target.closest?.('.main .form-card > div');
+  if (!group) return;
+  const groups = formGroups();
+  const index = groups.indexOf(group);
+  if (index !== -1) {
+    state.focusedGroupIndex = index;
+    applyFocusedGroupClass();
+  }
 });
 
 render();
